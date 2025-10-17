@@ -2,19 +2,16 @@ import { Task } from "../../domain/entities/Task";
 import { TaskResponseMapper } from "../mappers/TaskResponseMapper";
 import { TaskMapper } from "../../application/mappers/TaskMapper";
 import type { TaskRepositoryPort } from "../../domain/ports/TaskRepositoryPort";
-import type { HttpClient } from "../../../../core/http/httpclient";
+import { HttpClient } from "../../../../core/http/httpclient";
 
 export class TaskApiAdapter implements TaskRepositoryPort {
-  constructor(private http: HttpClient) {}
+  private http = HttpClient.getInstance();
 
-  findById(id: string): Promise<Task> {
-    throw new Error("Method not implemented.");
-  }
-  delete(id: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async delete(id: string): Promise<void> {
+    await this.http.delete(`/api/tasks/${id}`);
   }
 
-  async findAll(): Promise<Task[]> {
+  async getAll(): Promise<Task[]> {
     const response = await this.http.get<Task[]>("/api/tasks");
     const data = response as any[];
     const dtos = data.map((item: any) =>
@@ -23,7 +20,7 @@ export class TaskApiAdapter implements TaskRepositoryPort {
     return dtos.map(TaskMapper.fromDTO);
   }
 
-  async getTaskById(id: string): Promise<Task | null> {
+  async getById(id: string): Promise<Task | null> {
     const response = await fetch(`/api/tasks/${id}`);
     if (!response.ok) return null;
     const dto = TaskResponseMapper.fromApiResponse(await response.json());
@@ -32,10 +29,6 @@ export class TaskApiAdapter implements TaskRepositoryPort {
 
   async save(task: Task): Promise<void> {
     const dto = TaskMapper.toDTO(task);
-    await fetch(`/api/tasks/${dto.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dto),
-    });
+    await this.http.post(`/api/tasks/`, JSON.stringify(dto));
   }
 }

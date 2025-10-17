@@ -2,8 +2,8 @@ import type { Task } from "../entities/Task";
 
 export interface TaskRepositoryPort {
   // Define los métodos que el repositorio debe implementar
-  findById(id: string): Promise<Task>;
-  save(task: any): Promise<void>;
+  getById(id: string): Promise<Task | null>;
+  save(task: Task): Promise<void>;
   delete(id: string): Promise<void>;
-  findAll(): Promise<Task[]>;
+  getAll(): Promise<Task[]>;
 }
