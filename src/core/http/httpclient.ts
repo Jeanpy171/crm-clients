@@ -1,17 +1,15 @@
+import axios, { type AxiosInstance } from "axios";
+
 export class HttpClient {
   private static instance: HttpClient;
-  private baseUrl: string = "";
-  private headers: Record<string, string> = {};
+  private client: AxiosInstance;
 
-  // constructor(baseUrl: string, token?: string) {
-  //   this.baseUrl = baseUrl;
-  //   this.headers = {
-  //     "Content-Type": "application/json",
-  //     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  //   };
-  // }
-
-  private constructor() {}
+  private constructor() {
+    this.client = axios.create({
+      baseURL: "https://api.midominio.com",
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   static getInstance() {
     if (!HttpClient.instance) {
@@ -20,44 +18,27 @@ export class HttpClient {
     return HttpClient.instance;
   }
 
-  setToken(token: string) {
-    this.headers["Authorization"] = `Bearer ${token}`;
+  setToken(token: string | null) {
+    if (token) {
+      this.client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete this.client.defaults.headers.common["Authorization"];
+    }
   }
 
-  async get<T>(endpoint: string): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      headers: this.headers,
-    });
-    if (!res.ok) throw new Error("Error en GET " + endpoint);
-    return res.json();
+  get<T>(url: string) {
+    return this.client.get<T>(url).then((r) => r.data);
   }
 
-  async post<T>(endpoint: string, body: any): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) throw new Error("Error en POST " + endpoint);
-    return res.json();
+  post<T>(url: string, body: any) {
+    return this.client.post<T>(url, body).then((r) => r.data);
   }
 
-  async put<T>(endpoint: string, body: any): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "PUT",
-      headers: this.headers,
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) throw new Error("Error en PUT " + endpoint);
-    return res.json();
+  patch<T>(url: string, body: any) {
+    return this.client.patch<T>(url, body).then((r) => r.data);
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "DELETE",
-      headers: this.headers,
-    });
-    if (!res.ok) throw new Error("Error en DELETE " + endpoint);
-    return res.json();
+  delete<T>(url: string) {
+    return this.client.delete<T>(url).then((r) => r.data);
   }
 }

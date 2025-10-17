@@ -33,7 +33,10 @@
 // import { path } from "framer-motion/client";
 import { Navigate } from "react-router-dom";
 import React from "react";
-import AdvisorDashboard from "../../ui/admin/pages/dashboard/AdminDashboard";
+import SignInPage from "../../ui/auth/pages/signin/SignInPage";
+import AdminDashboard from "../../ui/admin/pages/dashboard/Dashboard";
+import AdvisorDashboard from "../../ui/advisor/pages/dashboard/Dashboard";
+import { MainLayout } from "../../ui/shared/layouts/MainLayout";
 
 export interface RouteConfig {
   path: string;
@@ -57,18 +60,18 @@ export const Routes = {
       signin: {
         title: "",
         path: "signin",
-        element: () => <div>Sign In Page</div>,
+        element: SignInPage,
       },
     },
   },
   admin: {
     path: "admin",
-    layout: React.Fragment,
+    layout: MainLayout,
     routes: {
       dashboard: {
         title: "Dashboard",
         path: "",
-        element: () => <div>Admin Dashboard</div>,
+        element: AdminDashboard,
       },
       general: {
         title: "General",
@@ -79,22 +82,47 @@ export const Routes = {
   },
   manager: {
     path: "manager",
-    layout: React.Fragment,
+    layout: MainLayout,
     routes: {
       dashboard: {
         title: "Dashboard",
         path: "",
-        element: () => <div>Manager Dashboard</div>,
+        element: AdminDashboard,
       },
     },
   },
   advisor: {
     path: "advisor",
-    layout: React.Fragment,
+    layout: MainLayout,
     routes: {
       dashboard: {
         title: "Dashboard",
         path: "",
+        element: AdvisorDashboard,
+      },
+      kanban: {
+        title: "Kanban Clientes",
+        path: "kanban",
+        element: AdvisorDashboard,
+      },
+      tasks: {
+        title: "Tareas",
+        path: "tasks",
+        element: AdvisorDashboard,
+      },
+      schedule: {
+        title: "Calendario",
+        path: "schedule",
+        element: AdvisorDashboard,
+      },
+      leads: {
+        title: "Leads",
+        path: "leads",
+        element: AdvisorDashboard,
+      },
+      clients: {
+        title: "clientes",
+        path: "clients",
         element: AdvisorDashboard,
       },
     },

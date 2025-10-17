@@ -1,5 +1,5 @@
-import type { Task } from "../../domain/entities/Task";
 import type { TaskRepositoryPort } from "../../domain/ports/TaskRepositoryPort";
+import type { TaskDTO } from "../dtos/TaskDTO";
 
 export class GetTasksUseCase {
   private taskRepository: TaskRepositoryPort;
@@ -8,7 +8,7 @@ export class GetTasksUseCase {
     this.taskRepository = taskRepository;
   }
 
-  async execute(): Promise<Task[]> {
-    return this.taskRepository.findAll();
+  async execute(): Promise<TaskDTO[]> {
+    return await this.taskRepository.getAll();
   }
 }

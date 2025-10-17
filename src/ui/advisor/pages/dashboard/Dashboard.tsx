@@ -2,11 +2,10 @@ import React from "react";
 import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import StatsGrid from "../../../shared/components/stats-grid/StatsGrid";
-// import { Task } from "../../types/task";
+import type { Task } from "../../../../modules/tasks/domain/entities/Task";
 
 interface AdvisorDashboardProps {
-  //tasks: Task[];
-  tasks: any[];
+  tasks: Task[];
 }
 
 // Mock data for the dashboard
