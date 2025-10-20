@@ -36,7 +36,7 @@ export const useAuth = () => {
   const handleVerifyUser = async () => {
     const storedUser = await new SessionLocalStorageAdapter().getUser();
     if (storedUser) {
-      dispatch(setUser(UserMapper.toDomain(JSON.parse(storedUser))));
+      dispatch(setUser((JSON.parse(storedUser))));
     }
   };
 

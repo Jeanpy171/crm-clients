@@ -1,13 +1,10 @@
 import {
-  createSlice,
   createAsyncThunk,
+  createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import { SignInUseCase } from "../../../modules/users/application/useCases/SignInUseCase";
-// import { UserApiAdapter } from "../../../modules/users/infrastructure/adapters/UserApiAdapter";
-import { SignOutUseCase } from "../../../modules/users/application/useCases/SignOutUseCase";
-import { UserMockAdapter } from "../../../modules/users/infrastructure/adapters/UserMockAdapter";
-import type { UserDTO } from "../../../modules/users/application/dtos/UserDTO";
+import type { UserDTO } from "../../../core/application/dtos/users/UserDTO";
+import { container } from "../../../config/di-container";
 
 export interface AuthState {
   user: UserDTO | null;
@@ -21,13 +18,13 @@ const initialState: AuthState = {
   error: null,
 };
 
-// const repository = new UserApiAdapter();
-const repository = new UserMockAdapter();
+const signInRepository = container.signInUseCase;
+const signOutRepository = container.signOutUseCase;
 
 export const signIn = createAsyncThunk(
   "auth/signIn",
   async (payload: { username: string; password: string; role: string }) => {
-    return await new SignInUseCase(repository).execute(
+    return await signInRepository.execute(
       payload.username,
       payload.password,
       payload.role
@@ -36,7 +33,7 @@ export const signIn = createAsyncThunk(
 );
 
 export const signOut = createAsyncThunk("auth/signOut", async () => {
-  return await new SignOutUseCase(repository).execute();
+  return await signOutRepository.execute();
 });
 
 const authSlice = createSlice({

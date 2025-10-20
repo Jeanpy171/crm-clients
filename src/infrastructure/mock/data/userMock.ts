@@ -1,3 +1,5 @@
+import { UserRoles } from "../../../core/domain/value-objects/user";
+
 export const usersMock = [
   {
     id: "1a2b3c4d",
@@ -6,7 +8,7 @@ export const usersMock = [
     password: "admin123",
     firstName: "Admin",
     lastName: "Prueba",
-    role: "admin",
+    role: UserRoles.ADMIN,
     phone: "+593987654321",
     isActive: true,
   },
@@ -17,7 +19,7 @@ export const usersMock = [
     password: "manager123",
     firstName: "Manager",
     lastName: "Prueba",
-    role: "manager",
+    role: UserRoles.SALES_MANAGER,
     phone: "+593987654321",
     isActive: true,
   },
@@ -28,7 +30,7 @@ export const usersMock = [
     password: "advisor123",
     firstName: "Advisor",
     lastName: "Prueba",
-    role: "advisor",
+    role: UserRoles.ADVISOR,
     phone: "+593987654321",
     isActive: true,
   },

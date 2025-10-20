@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardBody, Badge } from "@heroui/react";
 import KanbanCard from "./KanBanCard";
-import type { Lead } from "../../../../../../modules/leads/domain/entities/Lead";
+import type { Lead } from "../../../../../../core/domain/entities/Lead";
 
 interface KanbanColumnProps {
   title: string;
@@ -47,7 +47,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          {leads.length > 0 ? (
+          {leads?.length > 0 ? (
             <div className="space-y-2">
               {leads.map((lead) => (
                 <KanbanCard

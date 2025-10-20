@@ -35,8 +35,14 @@ import { Navigate } from "react-router-dom";
 import React from "react";
 import SignInPage from "../features/auth/pages/signin/SignInPage";
 import AdminDashboard from "../features/admin/pages/dashboard/Dashboard";
-import AdvisorDashboard from "../features/advisor/pages/dashboard/Dashboard";
 import { MainLayout } from "../features/shared/layouts/MainLayout";
+import { UserRoles } from "../../core/domain/value-objects/user";
+import DashboardPage from "../features/advisor/pages/dashboard/Dashboard";
+import KanbanPage from "../features/advisor/pages/kanban/KanbanPage";
+import TasksPage from "../features/advisor/pages/tasks/TasksPage";
+import LeadsPage from "../features/advisor/pages/leads/LeadsPage";
+import ClientsPage from "../features/advisor/pages/clients/ClientsPage";
+import CalendarPage from "../features/advisor/pages/calendar/CalendarPage";
 
 export interface RouteConfig {
   path: string;
@@ -64,7 +70,7 @@ export const Routes = {
       },
     },
   },
-  admin: {
+  [UserRoles.ADMIN]: {
     path: "admin",
     layout: MainLayout,
     routes: {
@@ -80,7 +86,7 @@ export const Routes = {
       },
     },
   },
-  manager: {
+  [UserRoles.SALES_MANAGER]: {
     path: "manager",
     layout: MainLayout,
     routes: {
@@ -91,39 +97,39 @@ export const Routes = {
       },
     },
   },
-  advisor: {
+  [UserRoles.ADVISOR]: {
     path: "advisor",
     layout: MainLayout,
     routes: {
       dashboard: {
         title: "Dashboard",
         path: "",
-        element: AdvisorDashboard,
+        element: DashboardPage,
       },
       kanban: {
         title: "Kanban Clientes",
         path: "kanban",
-        element: AdvisorDashboard,
+        element: KanbanPage,
       },
       tasks: {
         title: "Tareas",
         path: "tasks",
-        element: AdvisorDashboard,
+        element: TasksPage,
       },
       schedule: {
         title: "Calendario",
         path: "schedule",
-        element: AdvisorDashboard,
+        element: CalendarPage,
       },
       leads: {
         title: "Leads",
         path: "leads",
-        element: AdvisorDashboard,
+        element: LeadsPage,
       },
       clients: {
         title: "clientes",
         path: "clients",
-        element: AdvisorDashboard,
+        element: ClientsPage,
       },
     },
   },

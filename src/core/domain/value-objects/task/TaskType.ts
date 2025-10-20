@@ -1,7 +1,7 @@
 export enum TaskType {
-  CALL = "OPENED",
-  MESSAGE = "PROGRAMED",
-  EMAIL = "COMPLETED",
+  CALL = "CALL",
+  MESSAGE = "MESSAGE",
+  EMAIL = "EMAIL",
   IN_PERSON_MEETING = "IN_PERSON_MEETING",
 }
 

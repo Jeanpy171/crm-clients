@@ -11,6 +11,7 @@ import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../../../../routing/routes";
 import { useAuth } from "../../../shared/hooks/useAuth";
+import { UserRoles } from "../../../../../core/domain/value-objects/user";
 
 const SignInPage: React.FC = () => {
   const [username, setUsername] = React.useState("");
@@ -27,17 +28,23 @@ const SignInPage: React.FC = () => {
     }
   }, [user]);
 
-  const handleRedirectByRole = (role: string) => {
+  const handleRedirectByRole = (role: UserRoles) => {
     // Redirect based on role
     switch (role) {
-      case "admin":
-        navigate(`/${Routes.admin.path}`, { replace: true });
+      case UserRoles.ADMIN:
+        navigate(`/${Routes.ADMIN.path.toLocaleLowerCase()}`, {
+          replace: true,
+        });
         break;
-      case "manager":
-        navigate(`/${Routes.manager.path}`, { replace: true });
+      case UserRoles.SALES_MANAGER:
+        navigate(`/${Routes.SALES_MANAGER.path.toLocaleLowerCase()}`, {
+          replace: true,
+        });
         break;
-      case "advisor":
-        navigate(`/${Routes.advisor.path}`, { replace: true });
+      case UserRoles.ADVISOR:
+        navigate(`/${Routes.ADVISOR.path.toLocaleLowerCase()}`, {
+          replace: true,
+        });
         break;
       default:
         break;
@@ -60,25 +67,25 @@ const SignInPage: React.FC = () => {
       handleLogin(username, password, role);
       console.warn("USUARIO QUE ENTRA", user);
 
-      if (user?.role) {
-        // Redirect based on role
-        switch (user?.role) {
-          case "admin":
-            navigate(Routes.admin.path);
-            break;
-          case "manager":
-            navigate(Routes.manager.path);
-            break;
-          case "advisor":
-            navigate(Routes.advisor.path);
-            break;
-          default:
-            break;
-          // history.push("/login");
-        }
-      } else {
-        // setError("Credenciales inválidas");
-      }
+      // if (user?.role) {
+      //   // Redirect based on role
+      //   switch (user?.role) {
+      //     case UserRoles.ADMIN:
+      //       navigate(Routes.admin.path);
+      //       break;
+      //     case UserRoles.SALES_MANAGER:
+      //       navigate(Routes.manager.path);
+      //       break;
+      //     case UserRoles.ADVISOR:
+      //       navigate(Routes.advisor.path);
+      //       break;
+      //     default:
+      //       break;
+      //     // history.push("/login");
+      //   }
+      // } else {
+      //   // setError("Credenciales inválidas");
+      // }
     } catch (err) {
       // setError("Error al iniciar sesión");
       console.error(err);
@@ -139,12 +146,14 @@ const SignInPage: React.FC = () => {
               }}
               isRequired
             >
-              <SelectItem key="admin">Administrador</SelectItem>
-              <SelectItem key="manager">Gerente de Ventas</SelectItem>
-              <SelectItem key="advisor">Asesor</SelectItem>
-              <SelectItem key="contract-generator">
-                Generador de Contratos
+              <SelectItem key={UserRoles.ADMIN}>Administrador</SelectItem>
+              <SelectItem key={UserRoles.SALES_MANAGER}>
+                Gerente de Ventas
               </SelectItem>
+              <SelectItem key={UserRoles.ADVISOR}>Asesor</SelectItem>
+              {/* <SelectItem key="contract-generator">
+                Generador de Contratos
+              </SelectItem> */}
             </Select>
 
             <Button

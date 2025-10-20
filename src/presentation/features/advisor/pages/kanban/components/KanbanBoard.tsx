@@ -2,7 +2,8 @@ import React from "react";
 import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import KanbanColumn from "./KanbanColumn";
-import type { Lead } from "../../../../../../modules/leads/domain/entities/Lead";
+import type { Lead } from "../../../../../../core/domain/entities/Lead";
+import { LeadStatus } from "../../../../../../core/domain/value-objects/lead";
 
 interface KanbanBoardProps {
   leads: Lead[];
@@ -20,10 +21,10 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   console.log("KanbanBoard rendering with leads:", leads);
   // Group leads by state
   const leadsByState = {
-    Calificar: leads.filter((lead) => lead.state === "Calificar"),
-    Desarrollar: leads.filter((lead) => lead.state === "Desarrollar"),
-    Proponer: leads.filter((lead) => lead.state === "Proponer"),
-    Cierre: leads.filter((lead) => lead.state === "Cierre"),
+    Calificar: leads?.filter((lead) => lead.state === LeadStatus.GRADE),
+    Desarrollar: leads?.filter((lead) => lead.state === LeadStatus.DEVELOP),
+    Proponer: leads?.filter((lead) => lead.state === LeadStatus.PROPOSE),
+    Cierre: leads?.filter((lead) => lead.state === LeadStatus.CLOSING),
   };
 
   return (
@@ -43,7 +44,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
         <KanbanColumn
           title="Calificar"
           leads={leadsByState.Calificar}
-          count={leadsByState.Calificar.length}
+          count={leadsByState.Calificar?.length}
           onLeadClick={onLeadClick}
           onLeadMove={onLeadMove}
           state="Calificar"
@@ -52,7 +53,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
         <KanbanColumn
           title="Desarrollar"
           leads={leadsByState.Desarrollar}
-          count={leadsByState.Desarrollar.length}
+          count={leadsByState.Desarrollar?.length}
           onLeadClick={onLeadClick}
           onLeadMove={onLeadMove}
           state="Desarrollar"
@@ -61,7 +62,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
         <KanbanColumn
           title="Proponer"
           leads={leadsByState.Proponer}
-          count={leadsByState.Proponer.length}
+          count={leadsByState.Proponer?.length}
           onLeadClick={onLeadClick}
           onLeadMove={onLeadMove}
           state="Proponer"
@@ -70,7 +71,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
         <KanbanColumn
           title="Cierre"
           leads={leadsByState.Cierre}
-          count={leadsByState.Cierre.length}
+          count={leadsByState.Cierre?.length}
           onLeadClick={onLeadClick}
           onLeadMove={onLeadMove}
           state="Cierre"

@@ -1,7 +1,7 @@
 import React from "react";
 
 import KanbanBoard from "./components/KanbanBoard";
-import type { Lead } from "../../../../../modules/leads/domain/entities/Lead";
+import type { Lead } from "../../../../../core/domain/entities/Lead";
 
 interface AdvisorKanbanProps {
   leads: Lead[];

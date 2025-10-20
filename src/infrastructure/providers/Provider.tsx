@@ -7,7 +7,7 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthProvider store={store}>
       <HeroUIProvider>
-        <ToastProvider />
+        <ToastProvider placement="top-right" />
         {children}
       </HeroUIProvider>
     </AuthProvider>

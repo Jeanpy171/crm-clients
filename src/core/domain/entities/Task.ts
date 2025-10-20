@@ -19,11 +19,10 @@ export class Task {
   ) {}
 
   static create(props: {
-    id: string;
     type: TaskType;
     leadId: string;
     status: TaskStatus;
-    dueDate: Date;
+    dueDate: string;
     duration: number;
     notes?: string;
     completionNotes?: string;
@@ -35,11 +34,11 @@ export class Task {
     const priority = TaskPriorityVO.create(props.priority);
 
     return new Task(
-      props.id,
+      Date.now().toString() + Math.random().toString(36).substr(2, 9),
       type.value,
       props.leadId,
       status.value,
-      props.dueDate,
+      new Date(props.dueDate),
       props.duration,
       props.notes,
       props.completionNotes,

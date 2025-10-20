@@ -10,7 +10,8 @@ import {
   Chip,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import type { Lead } from "../../../../../../modules/leads/domain/entities/Lead";
+import type { Lead } from "../../../../../../core/domain/entities/Lead";
+import { LeadInterestLevel } from "../../../../../../core/domain/value-objects/lead";
 
 interface KanbanCardProps {
   lead: Lead;
@@ -27,11 +28,11 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
 }) => {
   const getInterestColor = () => {
     switch (lead.interest) {
-      case "Poco interesado":
+      case LeadInterestLevel.NOT_VERY_INTERESTED:
         return "warning";
-      case "Interesado":
+      case LeadInterestLevel.VERY_INTERESTED:
         return "success";
-      case "Medianamente interesado":
+      case LeadInterestLevel.INTEREST:
         return "primary";
       default:
         return "default";
@@ -39,7 +40,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
   };
 
   const states = ["Calificar", "Desarrollar", "Proponer", "Cierre"];
-  const availableStates = states.filter((state) => state !== currentState);
+  const availableStates = states?.filter((state) => state !== currentState);
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", lead.id);

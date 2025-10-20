@@ -1,16 +1,16 @@
 import { Button } from "@heroui/react";
-import type { UserRoles } from "../../../../../../modules/users/domain/valueObjects/UserRoles";
-import type { User } from "../../../../../../modules/users/domain/entities/User";
+import { UserRoles } from "../../../../../../core/domain/value-objects/user";
+import type { User } from "../../../../../../core/domain/entities/User";
 
 const getThemeColor = (role?: UserRoles) => {
   if (!role) return "bg-gray-700";
 
   switch (role) {
-    case "manager":
+    case UserRoles.SALES_MANAGER:
       return "bg-blue-600";
-    case "advisor":
+    case UserRoles.ADVISOR:
       return "bg-emerald-600";
-    case "admin":
+    case UserRoles.ADMIN:
       return "bg-purple-600";
     default:
       return "bg-gray-700";
@@ -28,7 +28,7 @@ export const Header = ({
 
   return (
     <header
-      className={`${getThemeColor(user?.role)} text-white shadow-md h-28`}
+      className={`${getThemeColor(user?.role)} text-white shadow-md h-20`}
     >
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-3">

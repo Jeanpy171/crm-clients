@@ -1,8 +1,9 @@
 import React from "react";
 import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import type { Task } from "../../../../../core/domain/entities/Task";
+import { TaskStatus } from "../../../../../core/domain/value-objects/task";
 import StatsGrid from "../../../shared/components/stats-grid/StatsGrid";
-import type { Task } from "../../../../../modules/tasks/domain/entities/Task";
 
 interface AdvisorDashboardProps {
   tasks: Task[];
@@ -63,20 +64,45 @@ const mockStats = [
     changeType: "neutral" as const,
     icon: "lucide:clock",
   },
+  {
+    id: "overdue-tasks",
+    title: "Tareas Atrasadas Sin Gestión",
+    value: 0,
+    changeType: "negative" as const,
+    icon: "lucide:alert-triangle",
+  },
 ];
 
-const AdvisorDashboard: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
+const DashboardPage: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
+  // Calculate overdue tasks without management
+  const overdueUnmanagedTasks = tasks?.filter((task) => {
+    const dueDate = new Date(task.dueDate);
+    const now = new Date();
+    return dueDate < now && task.status === TaskStatus.OPENED;
+  });
+
+  // Update the stats with calculated value
+  const updatedStats = mockStats.map((stat) =>
+    stat.id === "overdue-tasks"
+      ? { ...stat, value: overdueUnmanagedTasks?.length }
+      : stat
+  );
+
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Mi Dashboard</h2>
+    <div className="space-y-4 sm:space-y-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+        Mi Dashboard
+      </h2>
 
-      <StatsGrid stats={mockStats} />
+      <StatsGrid stats={updatedStats} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <Card>
-          <CardBody className="p-5">
-            <h3 className="text-lg font-semibold mb-4">Próximas Tareas</h3>
-            <div className="space-y-3">
+          <CardBody className="p-3 sm:p-5">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
+              Próximas Tareas
+            </h3>
+            <div className="space-y-2 sm:space-y-3">
               {tasks?.length > 0 ? (
                 tasks.slice(0, 5).map((task) => {
                   const dueDate = new Date(task.dueDate);
@@ -133,7 +159,7 @@ const AdvisorDashboard: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
                         return "bg-amber-100 text-amber-700";
                       case "completada":
                         return "bg-green-100 text-green-700";
-                      case "cancelada":
+                      case "cerrada":
                         return "bg-red-100 text-red-700";
                       default:
                         return "bg-gray-100 text-gray-700";
@@ -143,35 +169,38 @@ const AdvisorDashboard: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
                   return (
                     <div
                       key={task.id}
-                      className={`p-3 rounded-md border flex items-center justify-between ${getTaskColor(
+                      className={`p-2 sm:p-3 rounded-md border flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 ${getTaskColor(
                         task.type
                       )}`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-full">
-                          <Icon icon={getTaskIcon(task.type)} />
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <div className="p-1.5 sm:p-2 rounded-full flex-shrink-0">
+                          <Icon
+                            icon={getTaskIcon(task.type)}
+                            className="text-sm sm:text-base"
+                          />
                         </div>
-                        <div>
-                          <p className="font-medium">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base truncate">
                             {task.type} con {task.advisor}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs sm:text-sm text-gray-500 truncate">
                             {dateString}, {timeString}
                           </p>
                         </div>
                       </div>
                       <span
-                        className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
+                        className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${getStatusColor(
                           task.status
                         )}`}
                       >
-                        {task.status === "abierto"
+                        {task.status === TaskStatus.OPENED
                           ? "Pendiente"
-                          : task.status === "programada"
+                          : task.status === TaskStatus.PROGRAMED
                           ? "Programada"
-                          : task.status === "completada"
+                          : task.status === TaskStatus.COMPLETED
                           ? "Completada"
-                          : "Cancelada"}
+                          : "Cerrada"}
                       </span>
                     </div>
                   );
@@ -186,36 +215,42 @@ const AdvisorDashboard: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
         </Card>
 
         <Card>
-          <CardBody className="p-5">
-            <h3 className="text-lg font-semibold mb-4">Secuencias Asignadas</h3>
-            <div className="space-y-3">
-              <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium">Secuencia de Calificación</h4>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+          <CardBody className="p-3 sm:p-5">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
+              Secuencias Asignadas
+            </h3>
+            <div className="space-y-2 sm:space-y-3">
+              <div className="p-2 sm:p-3 bg-gray-50 rounded-md border border-gray-200">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
+                  <h4 className="font-medium text-sm sm:text-base">
+                    Secuencia de Calificación
+                  </h4>
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full whitespace-nowrap self-start">
                     Activa
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-xs sm:text-sm text-gray-600 mb-2">
                   3 pasos • 5 leads asignados
                 </p>
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-xs text-gray-500">
                   <span>Creada: 10/05/2023</span>
                   <span>Progreso: 60%</span>
                 </div>
               </div>
 
-              <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium">Secuencia de Desarrollo</h4>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+              <div className="p-2 sm:p-3 bg-gray-50 rounded-md border border-gray-200">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
+                  <h4 className="font-medium text-sm sm:text-base">
+                    Secuencia de Desarrollo
+                  </h4>
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full whitespace-nowrap self-start">
                     Activa
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-xs sm:text-sm text-gray-600 mb-2">
                   5 pasos • 3 leads asignados
                 </p>
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-xs text-gray-500">
                   <span>Creada: 05/05/2023</span>
                   <span>Progreso: 40%</span>
                 </div>
@@ -228,4 +263,4 @@ const AdvisorDashboard: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
   );
 };
 
-export default AdvisorDashboard;
+export default DashboardPage;
