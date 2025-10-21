@@ -4,4 +4,10 @@ export interface IContactRepository {
   getInteractionPhaseCatalog(): Promise<CatalogDTO[]>;
   getInterestLevelCatalog(): Promise<CatalogDTO[]>;
   getContactStatusCatalog(): Promise<CatalogDTO[]>;
+  getHousingSectorCatalog(): Promise<CatalogDTO[]>;
+  getInterestInNewServiceCatalog(): Promise<CatalogDTO[]>;
+  getPreferredPlanCatalog(): Promise<CatalogDTO[]>;
+  getAreasForImprovementCatalog(): Promise<CatalogDTO[]>;
+  getServiceSatisfactionCatalog(): Promise<CatalogDTO[]>;
+  getServiceDurationCatalog(): Promise<CatalogDTO[]>;
 }

@@ -1,3 +1,9 @@
 export { InterestLevel } from "./InterestLevel";
 export { InteractionPhase } from "./InteractionPhase";
 export { ContactStatus } from "./ContactStatus";
+export { HousingSector } from "./HousingSector";
+export { InterestInNewService } from "./InterestInNewService";
+export { PreferredPlan } from "./PreferredPlan";
+export { AreasForImprovement } from "./AreasForImprovement";
+export { ServiceSatisfaction } from "./ServiceSatisfaction";
+export { ServiceDuration } from "./ServiceDuration";

@@ -1,11 +1,12 @@
 import React from "react";
-import { Card, CardBody, Select, SelectItem } from "@heroui/react";
+import { Button, Card, CardBody, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import type { Lead } from "../../../../../core/domain/entities/Lead";
 import { InteractionPhase } from "../../../../../core/domain/value-objects/contact";
 import { InteractionPhaseDropdown } from "../../../shared/components/interaction-phase-dropdown/InteractionPhaseDropdown";
 import { ContactStatusDropdown } from "../../../shared/components/contact-status-dropdown/ContactStatusDropdown";
 import { InterestLevelDropdown } from "../../../shared/components/interest-level-dropdown/InterestLevelDropdown";
+import CreateClientModal from "./components/ModalCreateCliente";
 
 interface AdvisorClientsProps {
   leads: Lead[];
@@ -13,25 +14,49 @@ interface AdvisorClientsProps {
 }
 
 const ClientsPage: React.FC<AdvisorClientsProps> = ({ leads, onLeadClick }) => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const handleCreateClient = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSaveClient = (clientData: any) => {
+    console.log("Datos del cliente creado:", clientData);
+    // Aquí puedes procesar los datos del cliente
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
-
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
+        <Button
+          color="primary"
+          onPress={handleCreateClient}
+          startContent={<Icon icon="lucide:plus" />}
+        >
+          Nuevo cliente
+        </Button>
+      </div>
       {/* Filters */}
       <div className="flex flex-wrap gap-4">
-        <InteractionPhaseDropdown value={""} onChange={() => {}} />
+        <InteractionPhaseDropdown value={""} onChange={() => { }} />
         {/* <Select placeholder="Todos" className="w-48">
           <SelectItem key="Calificar">Calificar</SelectItem>
           <SelectItem key="Desarrollar">Desarrollar</SelectItem>
           <SelectItem key="Proponer">Proponer</SelectItem>
           <SelectItem key="Cierre">Cerrados (Nuestros Clientes)</SelectItem>
         </Select> */}
-        <ContactStatusDropdown value={""} onChange={() => {}} />
+        <ContactStatusDropdown value={""} onChange={() => { }} />
         {/* <Select placeholder="Todos" className="w-48">
           <SelectItem key="fidelizado">Cliente Fidelizado</SelectItem>
           <SelectItem key="perdido">Cliente Perdido</SelectItem>
         </Select> */}
-        <InterestLevelDropdown value={""} onChange={() => {}} />
+        <InterestLevelDropdown value={""} onChange={() => { }} />
         {/* <Select placeholder="Todos" className="w-48">
           <SelectItem key="Poco interesado">Poco interesado</SelectItem>
           <SelectItem key="Interesado">Interesado</SelectItem>
@@ -123,6 +148,13 @@ const ClientsPage: React.FC<AdvisorClientsProps> = ({ leads, onLeadClick }) => {
             </Card>
           ))}
       </div>
+      
+      {/* Modal para crear nuevo cliente */}
+      <CreateClientModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onSave={handleSaveClient}
+      />
     </div>
   );
 };
