@@ -1,7 +1,16 @@
+import type { ClientDTO } from "../../application/dtos/clients/ClientDTO";
+
+export interface FilterClientsParams {
+  page: number;
+  limit: number;
+  advisorId: string;
+}
+
 export interface IClientRepository {
-  getAll(): Promise<any[]>;
+  getAll(params: FilterClientsParams): Promise<ClientDTO[]>;
+  // getAllByAdvisorId(id: string): Promise<ClientDTO[]>;
   getById(id: string): Promise<any | null>;
-  save(client: any): Promise<void>;
+  save(client: ClientDTO): Promise<ClientDTO>;
   delete(id: string): Promise<void>;
-  patch(id: string, updates: Partial<any>): Promise<void>;
+  patch(id: string, updates: Partial<ClientDTO>): Promise<void>;
 }

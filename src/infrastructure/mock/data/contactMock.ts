@@ -42,7 +42,7 @@ export const interactionPhaseMocks = [
 export const interestLevelMocks = [
   {
     interest_level_id: "mskmsdlknsdvl",
-    interest_level_name: "VERY_INTERESTED",
+    interest_level_name: "VERY INTERESTED",
     interest_level_description: "Muy interesado",
   },
   {
@@ -52,7 +52,7 @@ export const interestLevelMocks = [
   },
   {
     interest_level_id: "56756sdascascvf",
-    interest_level_name: "NOT_VERY_INTERESTED",
+    interest_level_name: "NOT VERY INTERESTED",
     interest_level_description: "Poco interesado",
   },
 ];

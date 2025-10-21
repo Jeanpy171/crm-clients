@@ -40,8 +40,8 @@ export class Contact {
     interactionPhase: InteractionPhase;
     interestLevel: InterestLevel;
     status: ContactStatus;
-    createdAt: Date;
-    lastActivity: Date;
+    createdAt: string;
+    lastActivity: string;
     followUpNotes: string;
     // state: LeadStatus;
     // interest: LeadInterestLevel;
@@ -67,8 +67,8 @@ export class Contact {
       interactionPhase.value,
       interestLevel.value,
       contactState.value,
-      props.createdAt,
-      props.lastActivity,
+      new Date(props.createdAt),
+      new Date(props.lastActivity),
       props.followUpNotes,
       //   props.phone,
       //   props.sector,

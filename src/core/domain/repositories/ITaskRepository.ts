@@ -1,6 +1,5 @@
 import type { CatalogDTO } from "../../application/dtos/catalogs/CatalogDTO";
 import type { TaskDTO } from "../../application/dtos/tasks/TaskDTO";
-import type { Task } from "../entities/Task";
 
 export interface ITaskRepository {
   // Define los métodos que el repositorio debe implementar
@@ -11,5 +10,5 @@ export interface ITaskRepository {
   getById(id: string): Promise<TaskDTO | null>;
   save(task: TaskDTO): Promise<TaskDTO>;
   delete(id: string): Promise<void>;
-  patch(id: string, updates: Partial<Task>): Promise<void>;
+  patch(id: string, updates: Partial<TaskDTO>): Promise<void>;
 }

@@ -13,7 +13,7 @@ export class Lead {
   toJSON() {
     return {
       id: this.id,
-      ...this.data,
+      ...this.data.toJSON(),
     };
   }
 }

@@ -1,33 +1,32 @@
 import type { LeadDTO } from "../../../core/application/dtos/leads/LeadDTO";
+import { Contact } from "../../../core/domain/entities/Contact";
 import { Lead } from "../../../core/domain/entities/Lead";
 
 export class LeadMapper {
-  static fromApiToDto(apiResponse: any): LeadDTO {
+  static fromApiToDto(apiData: any): LeadDTO {
+    console.warn("LEADS: ", apiData);
     return {
-      id: apiResponse.lead_id,
-      name: apiResponse.name,
-      phone: apiResponse.phone,
-      sector: apiResponse.sector,
-      state: apiResponse.state,
-      interest: apiResponse.interest_level,
-      lastActivity: apiResponse.last_activity,
-      currentCompany: apiResponse.current_company,
-      currentPlanValue: apiResponse.current_plan_value,
-      serviceTime: apiResponse.service_time,
-      satisfactionRating: apiResponse.satisfaction_rating,
-      improvementAreas: apiResponse.improvement_areas,
-      preferredPlan: apiResponse.preferred_plan,
-      interestLevel: apiResponse.interest_level_description,
-      whatsMissing: apiResponse.whats_missing,
-      advisor: apiResponse.advisor,
+      id: apiData.id,
+      name: apiData.name,
+      company: apiData.company,
+      email: apiData.email,
+      phone: apiData.phone,
+      interactionPhase: apiData.interactionPhase,
+      interestLevel: apiData.interestLevel,
+      status: apiData.status,
+      createdAt: apiData.createdAt,
+      lastActivity: apiData.lastActivity,
+      followUpNotes: apiData.followUpNotes,
+      advisor: apiData.advisor,
     };
   }
 
-  static toDomain(dto: any): Lead {
-    return Lead.create(dto);
+  static toDomain(dto: LeadDTO): Lead {
+    console.warn("LEADS TODOMAIN: ", dto);
+    return Lead.create(Contact.create(dto));
   }
 
-  static toDTO(lead: Lead): LeadDTO {
+  static toDto(lead: Lead): LeadDTO {
     return lead.toJSON();
   }
 }

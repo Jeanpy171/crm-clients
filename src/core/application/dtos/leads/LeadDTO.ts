@@ -1,6 +1,6 @@
-import type { Contact } from "../../../domain/entities/Contact";
+import type { ContactDTO } from "../contact/ContactDTO";
 
-export interface LeadDTO extends Contact {
+export interface LeadDTO extends ContactDTO {
   id: string;
   // name: string;
   // phone: string;

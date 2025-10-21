@@ -25,6 +25,8 @@ export const useInterestLevels = () => {
   const getInterestDescriptionByName = (name: string) => {
     if (!interestLevels.length) return name;
 
+    console.warn("INTEREST: ", name);
+
     return interestLevels.find((status) => status.name === name)?.description;
   };
 

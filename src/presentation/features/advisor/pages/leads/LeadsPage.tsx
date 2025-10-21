@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, CardBody, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import type { Lead } from "../../../../../core/domain/entities/Lead";
@@ -6,13 +6,29 @@ import { InteractionPhase } from "../../../../../core/domain/value-objects/conta
 import { InteractionPhaseDropdown } from "../../../shared/components/interaction-phase-dropdown/InteractionPhaseDropdown";
 import { InterestLevelDropdown } from "../../../shared/components/interest-level-dropdown/InterestLevelDropdown";
 import { ContactStatusDropdown } from "../../../shared/components/contact-status-dropdown/ContactStatusDropdown";
+import { useLeads } from "../../../shared/hooks/useLeads";
+import { useInteractionPhases } from "../../../shared/hooks/useInteractionPhases";
+import { useInterestLevels } from "../../../shared/hooks/useInterestLevels";
+import { ContactCard } from "../../../shared/components/contact-card/ContactCard";
+import { useAuth } from "../../../shared/hooks/useAuth";
 
-interface AdvisorLeadsProps {
-  leads: Lead[];
-  onLeadClick: (lead: Lead) => void;
-}
+// interface AdvisorLeadsProps {
+//   leads: Lead[];
+//   onLeadClick: (lead: Lead) => void;
+// }
 
-const LeadsPage: React.FC<AdvisorLeadsProps> = ({ leads, onLeadClick }) => {
+const LeadsPage = () => {
+  const { user } = useAuth();
+  const { leads, handleGetLeads } = useLeads();
+
+  useEffect(() => {
+    if (!leads.length) {
+      handleGetLeads(user?.id ?? "");
+    }
+  }, [user]);
+
+  const onLeadClick = (lead: Lead) => {};
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Mis Leads</h2>
@@ -40,56 +56,58 @@ const LeadsPage: React.FC<AdvisorLeadsProps> = ({ leads, onLeadClick }) => {
       {/* Leads Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {leads?.map((lead) => (
-          <Card
-            key={lead.id}
-            shadow="sm"
-            className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => onLeadClick(lead)}
-          >
-            <CardBody className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-medium">{lead.data.name}</h4>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${
-                    lead.data.interactionPhase === InteractionPhase.GRADE
-                      ? "bg-blue-100 text-blue-700"
-                      : lead.data.interactionPhase === InteractionPhase.DEVELOP
-                      ? "bg-amber-100 text-amber-700"
-                      : lead.data.interactionPhase === InteractionPhase.PROPOSE
-                      ? "bg-purple-100 text-purple-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-                >
-                  {lead.data.status}
-                </span>
-              </div>
+          <ContactCard contact={lead} onClick={onLeadClick} />
+          //   <Card
+          //     key={lead.id}
+          //     shadow="sm"
+          //     className="cursor-pointer hover:shadow-md transition-shadow"
+          //     onClick={() => onLeadClick(lead)}
+          //   >
+          //     <CardBody className="p-4">
+          //       <div className="flex justify-between items-start mb-2">
+          //         <h4 className="font-medium">{lead.data.name}</h4>
+          //         <span
+          //           className={`text-xs px-2 py-0.5 rounded-full ${
+          //             lead.data.interactionPhase === InteractionPhase.GRADE
+          //               ? "bg-blue-100 text-blue-700"
+          //               : lead.data.interactionPhase === InteractionPhase.DEVELOP
+          //               ? "bg-amber-100 text-amber-700"
+          //               : lead.data.interactionPhase === InteractionPhase.PROPOSE
+          //               ? "bg-purple-100 text-purple-700"
+          //               : "bg-green-100 text-green-700"
+          //           }`}
+          //         >
+          //           {getPhaseDescriptionByName(lead.data.interactionPhase)}
+          //         </span>
+          //       </div>
 
-              <div className="space-y-1 text-sm text-gray-600">
-                <p>
-                  <Icon icon="lucide:phone" className="inline w-4 h-4 mr-1" />
-                  {lead.data.phone}
-                </p>
-                <p>
-                  <Icon
-                    icon="lucide:building"
-                    className="inline w-4 h-4 mr-1"
-                  />
-                  {lead.data.company}
-                </p>
-                <p>
-                  <Icon icon="lucide:star" className="inline w-4 h-4 mr-1" />
-                  {lead.data.interestLevel}/10 interés
-                </p>
-              </div>
+          //       <div className="space-y-1 text-sm text-gray-600">
+          //         <p>
+          //           <Icon icon="lucide:phone" className="inline w-4 h-4 mr-1" />
+          //           {lead.data.phone}
+          //         </p>
+          //         <p>
+          //           <Icon
+          //             icon="lucide:building"
+          //             className="inline w-4 h-4 mr-1"
+          //           />
+          //           {lead.data.company}
+          //         </p>
+          //         <p>
+          //           <Icon icon="lucide:star" className="inline w-4 h-4 mr-1" />
+          //           <strong>Nivel de Interes:</strong>{" "}
+          //           {getInterestDescriptionByName(lead.data.interestLevel)}
+          //         </p>
+          //       </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-200">
-                <p className="text-xs text-gray-500">
-                  Última actividad:{" "}
-                  {new Date(lead.data.lastActivity).toLocaleDateString()}
-                </p>
-              </div>
-            </CardBody>
-          </Card>
+          //       <div className="mt-3 pt-3 border-t border-gray-200">
+          //         <p className="text-xs text-gray-500">
+          //           Última actividad:{" "}
+          //           {new Date(lead.data.lastActivity).toLocaleDateString()}
+          //         </p>
+          //       </div>
+          //     </CardBody>
+          //   </Card>
         ))}
       </div>
     </div>
