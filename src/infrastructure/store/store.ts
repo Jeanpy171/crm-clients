@@ -7,6 +7,9 @@ import taskReducer from "../store/slices/tasks";
 import taskPriorityReducer from "../store/slices/taskPriorities";
 import taskTypeReducer from "../store/slices/taskTypes";
 import taskStatusReducer from "../store/slices/taskStatus";
+import contactStatusReducer from "../store/slices/contactStatus";
+import interactionPhaseReducer from "../store/slices/interactionPhase";
+import interestLevelReducer from "../store/slices/interestLevel";
 
 export const store = configureStore({
   reducer: {
@@ -15,5 +18,8 @@ export const store = configureStore({
     taskPriorities: taskPriorityReducer,
     taskTypes: taskTypeReducer,
     taskStatus: taskStatusReducer,
+    contactStatus: contactStatusReducer,
+    interactionPhases: interactionPhaseReducer,
+    interestLevels: interestLevelReducer,
   },
 });

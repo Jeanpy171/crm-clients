@@ -3,7 +3,7 @@ import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import KanbanColumn from "./KanbanColumn";
 import type { Lead } from "../../../../../../core/domain/entities/Lead";
-import { LeadStatus } from "../../../../../../core/domain/value-objects/lead";
+import { InteractionPhase } from "../../../../../../core/domain/value-objects/contact";
 
 interface KanbanBoardProps {
   leads: Lead[];
@@ -21,10 +21,18 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   console.log("KanbanBoard rendering with leads:", leads);
   // Group leads by state
   const leadsByState = {
-    Calificar: leads?.filter((lead) => lead.state === LeadStatus.GRADE),
-    Desarrollar: leads?.filter((lead) => lead.state === LeadStatus.DEVELOP),
-    Proponer: leads?.filter((lead) => lead.state === LeadStatus.PROPOSE),
-    Cierre: leads?.filter((lead) => lead.state === LeadStatus.CLOSING),
+    Calificar: leads?.filter(
+      (lead) => lead.data.interactionPhase === InteractionPhase.GRADE
+    ),
+    Desarrollar: leads?.filter(
+      (lead) => lead.data.interactionPhase === InteractionPhase.DEVELOP
+    ),
+    Proponer: leads?.filter(
+      (lead) => lead.data.interactionPhase === InteractionPhase.PROPOSE
+    ),
+    Cierre: leads?.filter(
+      (lead) => lead.data.interactionPhase === InteractionPhase.CLOSING
+    ),
   };
 
   return (

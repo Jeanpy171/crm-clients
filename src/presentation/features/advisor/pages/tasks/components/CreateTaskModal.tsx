@@ -141,7 +141,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 required
               >
                 {leads?.map((lead) => (
-                  <SelectItem key={lead.id}>{lead.name}</SelectItem>
+                  <SelectItem key={lead.id}>{lead.data.name}</SelectItem>
                 ))}
               </Select>
             </div>

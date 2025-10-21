@@ -35,7 +35,7 @@ const CalendarPage: React.FC<AdvisorCalendarProps> = ({ tasks, leads }) => {
 
     return {
       id: task.id,
-      title: `${task.type} con ${lead?.name || "Cliente"}`,
+      title: `${task.type} con ${lead?.data.name || "Cliente"}`,
       date: dateStr,
       time: timeStr,
       duration: task.duration,

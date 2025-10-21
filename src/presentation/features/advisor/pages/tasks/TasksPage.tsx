@@ -94,7 +94,7 @@ const TasksPage: React.FC<AdvisorTasksProps> = ({
 
   const getLeadName = (leadId: string) => {
     const lead = leads?.find((l) => l.id === leadId);
-    return lead ? lead.name : "Cliente desconocido";
+    return lead ? lead.data.name : "Cliente desconocido";
   };
 
   const formatDate = (date: Date) => {

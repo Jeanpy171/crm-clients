@@ -1,19 +1,24 @@
 import { GetTasksUseCase } from "../core/application/use-cases/tasks/GetTaskUseCase";
 import { SaveTaskUseCase } from "../core/application/use-cases/tasks/SaveTaskUseCase";
-import { GetTaskPriorityCatalogUseCase } from "../core/application/use-cases/users/GetTaskPriorityCatalogUseCase";
-import { GetTaskStatusCatalogUseCase } from "../core/application/use-cases/users/GetTaskStatusCatalogUseCase";
-import { GetTaskTypeCatalogUseCase } from "../core/application/use-cases/users/GetTaskTypeCatalogUseCase";
+import { GetTaskPriorityCatalogUseCase } from "../core/application/use-cases/tasks/GetTaskPriorityCatalogUseCase";
+import { GetTaskStatusCatalogUseCase } from "../core/application/use-cases/tasks/GetTaskStatusCatalogUseCase";
+import { GetTaskTypeCatalogUseCase } from "../core/application/use-cases/tasks/GetTaskTypeCatalogUseCase";
 import { SignInUseCase } from "../core/application/use-cases/users/SignInUseCase";
 import { SignOutUseCase } from "../core/application/use-cases/users/SignOutUseCase";
 // import { HttpTaskRepository } from "../infrastructure/http/repositories/HttpTaskRepository";
 import { MockTaskRepository } from "../infrastructure/mock/repositories/MockTaskRepository";
 // import { HttpUserRepository } from "../infrastructure/http/repositories/HttpUserRepository";
 import { MockUserRepository } from "../infrastructure/mock/repositories/MockUserRepository";
+import { MockContactRepository } from "../infrastructure/mock/repositories/MockContactRepository";
+import { GetContactStatusCatalogUseCase } from "../core/application/use-cases/contact/GetContactStatusCatalogUseCase";
+import { GetInteractionPhaseCatalogUseCase } from "../core/application/use-cases/contact/GetInteractionPhaseCatalogUseCase";
+import { GetInterestLevelCatalogUseCase } from "../core/application/use-cases/contact/GetInterestLevelCatalogUseCase";
 
 class DIContainer {
   // ============ MOCK REPOSITORIES ============
   private taskRepository = new MockTaskRepository();
   private userRepository = new MockUserRepository();
+  private contactStatusRepository = new MockContactRepository();
   // ============ HTTP REPOSITORIES ============
   // private leadRepository = new HttpLeadRepository();
   // private clientRepository = new HttpClientRepository();
@@ -23,6 +28,18 @@ class DIContainer {
   // ============ USE CASES - AUTH ============
   signInUseCase = new SignInUseCase(this.userRepository);
   signOutUseCase = new SignOutUseCase(this.userRepository);
+
+  // ============ USE CASES - CONTACT ============
+  getContactStatusUseCase = new GetContactStatusCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getInteractionPhaseUseCase = new GetInteractionPhaseCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getInterestLevelUseCase = new GetInterestLevelCatalogUseCase(
+    this.contactStatusRepository
+  );
+
   // ============ USE CASES - LEADS ============
   // createLeadUseCase = new CreateLeadUseCase(this.leadRepository);
   // updateLeadUseCase = new UpdateLeadUseCase(this.leadRepository);

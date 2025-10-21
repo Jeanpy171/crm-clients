@@ -2,7 +2,10 @@ import React from "react";
 import { Card, CardBody, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import type { Lead } from "../../../../../core/domain/entities/Lead";
-import { LeadStatus } from "../../../../../core/domain/value-objects/lead";
+import { InteractionPhase } from "../../../../../core/domain/value-objects/contact";
+import { InteractionPhaseDropdown } from "../../../shared/components/interaction-phase-dropdown/InteractionPhaseDropdown";
+import { InterestLevelDropdown } from "../../../shared/components/interest-level-dropdown/InterestLevelDropdown";
+import { ContactStatusDropdown } from "../../../shared/components/contact-status-dropdown/ContactStatusDropdown";
 
 interface AdvisorLeadsProps {
   leads: Lead[];
@@ -16,20 +19,22 @@ const LeadsPage: React.FC<AdvisorLeadsProps> = ({ leads, onLeadClick }) => {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4">
-        <Select placeholder="Todos los Estados" className="w-48">
+        <InteractionPhaseDropdown value={""} onChange={() => {}} />
+        {/* <Select placeholder="Todos los Estados" className="w-48">
           <SelectItem key="Calificar">Calificar</SelectItem>
           <SelectItem key="Desarrollar">Desarrollar</SelectItem>
           <SelectItem key="Proponer">Proponer</SelectItem>
           <SelectItem key="Cierre">Cierre</SelectItem>
-        </Select>
-
-        <Select placeholder="Todos los Niveles" className="w-48">
+        </Select> */}
+        <ContactStatusDropdown value={""} onChange={() => {}} />
+        <InterestLevelDropdown value={""} onChange={() => {}} />
+        {/* <Select placeholder="Todos los Niveles" className="w-48">
           <SelectItem key="Poco interesado">Poco interesado</SelectItem>
           <SelectItem key="Interesado">Interesado</SelectItem>
           <SelectItem key="Medianamente interesado">
             Medianamente interesado
           </SelectItem>
-        </Select>
+        </Select> */}
       </div>
 
       {/* Leads Grid */}
@@ -43,44 +48,44 @@ const LeadsPage: React.FC<AdvisorLeadsProps> = ({ leads, onLeadClick }) => {
           >
             <CardBody className="p-4">
               <div className="flex justify-between items-start mb-2">
-                <h4 className="font-medium">{lead.name}</h4>
+                <h4 className="font-medium">{lead.data.name}</h4>
                 <span
                   className={`text-xs px-2 py-0.5 rounded-full ${
-                    lead.state === LeadStatus.GRADE
+                    lead.data.interactionPhase === InteractionPhase.GRADE
                       ? "bg-blue-100 text-blue-700"
-                      : lead.state === LeadStatus.DEVELOP
+                      : lead.data.interactionPhase === InteractionPhase.DEVELOP
                       ? "bg-amber-100 text-amber-700"
-                      : lead.state === LeadStatus.PROPOSE
+                      : lead.data.interactionPhase === InteractionPhase.PROPOSE
                       ? "bg-purple-100 text-purple-700"
                       : "bg-green-100 text-green-700"
                   }`}
                 >
-                  {lead.state}
+                  {lead.data.status}
                 </span>
               </div>
 
               <div className="space-y-1 text-sm text-gray-600">
                 <p>
                   <Icon icon="lucide:phone" className="inline w-4 h-4 mr-1" />
-                  {lead.phone}
+                  {lead.data.phone}
                 </p>
                 <p>
                   <Icon
                     icon="lucide:building"
                     className="inline w-4 h-4 mr-1"
                   />
-                  {lead.sector}
+                  {lead.data.company}
                 </p>
                 <p>
                   <Icon icon="lucide:star" className="inline w-4 h-4 mr-1" />
-                  {lead.interestLevel}/10 interés
+                  {lead.data.interestLevel}/10 interés
                 </p>
               </div>
 
               <div className="mt-3 pt-3 border-t border-gray-200">
                 <p className="text-xs text-gray-500">
                   Última actividad:{" "}
-                  {new Date(lead.lastActivity).toLocaleDateString()}
+                  {new Date(lead.data.lastActivity).toLocaleDateString()}
                 </p>
               </div>
             </CardBody>

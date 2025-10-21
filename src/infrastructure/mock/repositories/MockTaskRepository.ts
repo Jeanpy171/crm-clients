@@ -27,7 +27,6 @@ export class MockTaskRepository implements ITaskRepository {
     return new Promise((resolve) => {
       setTimeout(() => {
         const data = taskStatusMock as any[];
-        console.warn("TASK EN MOCK: ", data);
         resolve(
           data.map((values) =>
             CatalogMapper.fromApiToDto(values, {

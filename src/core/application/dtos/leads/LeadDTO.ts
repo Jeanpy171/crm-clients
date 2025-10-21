@@ -1,23 +1,20 @@
-import type {
-  LeadInterestLevel,
-  LeadStatus,
-} from "../../../domain/value-objects/lead";
+import type { Contact } from "../../../domain/entities/Contact";
 
-export interface LeadDTO {
+export interface LeadDTO extends Contact {
   id: string;
-  name: string;
-  phone: string;
-  sector: string;
-  state: LeadStatus;
-  interest: LeadInterestLevel;
-  lastActivity: string;
-  currentCompany: string;
-  currentPlanValue: string;
-  serviceTime: string;
-  satisfactionRating: string;
-  improvementAreas: string;
-  preferredPlan: string;
-  interestLevel: string;
-  whatsMissing?: string;
-  advisor?: string;
+  // name: string;
+  // phone: string;
+  // sector: string;
+  // state: LeadStatus;
+  // interest: LeadInterestLevel;
+  // lastActivity: string;
+  // currentCompany: string;
+  // currentPlanValue: string;
+  // serviceTime: string;
+  // satisfactionRating: string;
+  // improvementAreas: string;
+  // preferredPlan: string;
+  // interestLevel: string;
+  // whatsMissing?: string;
+  // advisor?: string;
 }
