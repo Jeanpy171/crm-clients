@@ -7,6 +7,7 @@ import { AreasForImprovementDropdown } from '../../../../shared/components/areas
 import { ServiceSatisfactionDropdown } from '../../../../shared/components/service-satisfaction-dropdown/ServiceSatisfactionDropdown';
 import { InterestLevelDropdown } from '../../../../shared/components/interest-level-dropdown/InterestLevelDropdown';
 import { ServiceDurationDropdown } from '../../../../shared/components/service-duration-dropdown/ServiceDurationDropdown';
+import { CurrentPlanCostDropdown } from '../../../../shared/components/current-plan-cost-dropdown/CurrentPlanCostDropdown';
 
 interface CreateClientModalProps {
   isOpen: boolean;
@@ -94,10 +95,9 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     onValueChange={(value) => handleChange('currentCompany', value)}
                     isRequired
                   />
-                  {/* Dropdown para plan preferido */}
-                  <PreferredPlanDropdown 
-                    value={formData.preferredPlan} 
-                    onChange={(value) => handleChange('preferredPlan', value)} 
+                  <CurrentPlanCostDropdown 
+                    value={formData.currentPlanValue} 
+                    onChange={(value) => handleChange('currentPlanValue', value)} 
                   />
                   {/*<Select
                     label="Valor del plan que paga actualmente"
@@ -211,10 +211,10 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     <SelectItem key="otro">otro</SelectItem>
                   </Select> */}
                   
-                  {/* Nuevo dropdown para nivel de interés */}
-                  <InterestLevelDropdown 
-                    value={formData.interestLevel} 
-                    onChange={(value) => handleChange('interestLevel', value)} 
+                  {/* Nuevo dropdown para interés en nuevos servicios */}
+                  <InterestInNewServiceDropdown 
+                    value={formData.interestInNewService} 
+                    onChange={(value) => handleChange('interestInNewService', value)} 
                   />
 
                   {/* Campo anterior: Select manual para nivel de interés */}
@@ -248,11 +248,7 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     onValueChange={(value) => handleChange('whatsMissing', value)}
                   />
                   
-                  {/* Nuevo dropdown para interés en nuevos servicios */}
-                  <InterestInNewServiceDropdown 
-                    value={formData.interestInNewService} 
-                    onChange={(value) => handleChange('interestInNewService', value)} 
-                  />
+                  
                 </div>
               </form>
             </ModalBody>

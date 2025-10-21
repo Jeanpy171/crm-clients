@@ -209,3 +209,26 @@ export const serviceDurationMocks = [
     service_duration_description: "Más de 3 años",
   },
 ];
+
+export const currentPlanCostMocks = [
+  {
+    current_plan_cost_id: "15_to_20",
+    current_plan_cost_name: "BETWEEN_15_AND_20",
+    current_plan_cost_description: "15-20 USD",
+  },
+  {
+    current_plan_cost_id: "21_to_25",
+    current_plan_cost_name: "BETWEEN_21_AND_25",
+    current_plan_cost_description: "21-25 USD",
+  },
+  {
+    current_plan_cost_id: "26_to_30",
+    current_plan_cost_name: "BETWEEN_26_AND_30",
+    current_plan_cost_description: "26-30 USD",
+  },
+  {
+    current_plan_cost_id: "more_than_30",
+    current_plan_cost_name: "MORE_THAN_30",
+    current_plan_cost_description: "Más de 30 USD",
+  },
+];
