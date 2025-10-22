@@ -158,27 +158,27 @@ export const serviceSatisfactionMocks = [
   {
     service_satisfaction_id: "bad",
     service_satisfaction_name: "BAD",
-    service_satisfaction_description: "Malo",
+    service_satisfaction_description: "1. Malo",
   },
   {
     service_satisfaction_id: "regular",
     service_satisfaction_name: "REGULAR",
-    service_satisfaction_description: "Regular",
+    service_satisfaction_description: "2. Regular",
   },
   {
     service_satisfaction_id: "good",
     service_satisfaction_name: "GOOD",
-    service_satisfaction_description: "Bueno",
+    service_satisfaction_description: "3. Bueno",
   },
   {
     service_satisfaction_id: "very_good",
     service_satisfaction_name: "VERY_GOOD",
-    service_satisfaction_description: "Muy bueno",
+    service_satisfaction_description: "4. Muy bueno",
   },
   {
     service_satisfaction_id: "excellent",
     service_satisfaction_name: "EXCELLENT",
-    service_satisfaction_description: "Excelente",
+    service_satisfaction_description: "5. Excelente",
   },
 ];
 

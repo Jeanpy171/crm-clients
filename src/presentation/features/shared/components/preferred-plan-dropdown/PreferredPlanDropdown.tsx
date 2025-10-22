@@ -17,7 +17,7 @@ export const PreferredPlanDropdown = ({
 
   return (
     <Select
-      label="Plan preferido"
+      label="¿Qué plan le gustó más?"
       className="w-full"
       aria-label="Seleccionar plan preferido"
       value={value ?? ""}

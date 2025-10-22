@@ -17,7 +17,7 @@ export const ServiceSatisfactionDropdown = ({
 
   return (
     <Select
-      label="Satisfacción del servicio"
+      label="Califique de 1 a 5 (siendo 1 la calificación más baja) qué tan satisfecho está con el servicio"
       className="w-full"
       aria-label="Seleccionar satisfacción del servicio"
       value={value ?? ""}

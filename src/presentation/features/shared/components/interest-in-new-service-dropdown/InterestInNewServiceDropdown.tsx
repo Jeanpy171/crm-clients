@@ -17,7 +17,7 @@ export const InterestInNewServiceDropdown = ({
 
   return (
     <Select
-      label="Interés en nuevos servicios"
+      label="Del 1 al 10 ¿qué tan interesado está para adquirir el nuevo servicio?"
       className="w-full"
       aria-label="Seleccionar interés en nuevos servicios"
       value={value ?? ""}

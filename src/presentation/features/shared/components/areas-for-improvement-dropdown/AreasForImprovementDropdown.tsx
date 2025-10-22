@@ -17,7 +17,7 @@ export const AreasForImprovementDropdown = ({
 
   return (
     <Select
-      label="Áreas de mejora"
+      label="¿Qué le gustaría mejorar en el servicio que tiene actualmente?"
       className="w-full"
       aria-label="Seleccionar áreas de mejora"
       value={value ?? ""}
