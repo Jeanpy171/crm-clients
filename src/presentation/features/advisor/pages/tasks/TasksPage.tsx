@@ -9,7 +9,6 @@ import {
   TaskType,
 } from "../../../../../core/domain/value-objects/task";
 import { useTasks } from "../../../shared/hooks/useTasks";
-import CreateTaskModal from "./components/CreateTaskModal";
 import { TaskStatusDropdown } from "../../../shared/components/task-status-dropdown/TaskStatusDropdown";
 import { TaskTypeDropdown } from "../../../shared/components/task-type-dropdown/TaskTypeDropdown";
 import { useTaskStatus } from "../../../shared/hooks/useTaskStatus";
@@ -18,6 +17,7 @@ import { useTaskTypes } from "../../../shared/hooks/useTaskTypes";
 import { useAuth } from "../../../shared/hooks/useAuth";
 import { useLeads } from "../../../shared/hooks/useLeads";
 import { useClients } from "../../../shared/hooks/useClients";
+import CreateTaskModal from "../../../shared/components/create-task-modal/CreateTaskModal";
 
 interface AdvisorTasksProps {
   //   tasks: Task[];

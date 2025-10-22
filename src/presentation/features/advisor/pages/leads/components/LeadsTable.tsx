@@ -22,10 +22,12 @@ export const LeadsTable = ({
   data,
   onDataView,
   onHistoryView,
+  onTaskCreate,
 }: {
   data: Client[];
   onDataView: (arg0: Lead) => void;
   onHistoryView: (arg0: Lead) => void;
+  onTaskCreate: (arg0: Lead) => void;
 }) => {
   const { getPhaseDescriptionByName } = useInteractionPhases();
   const { getInterestDescriptionByName } = useInterestLevels();
@@ -89,7 +91,7 @@ export const LeadsTable = ({
               </Button>
               <Button
                 onPress={() => {
-                  onHistoryView(data);
+                  onTaskCreate(data);
                 }}
               >
                 Nueva Tarea

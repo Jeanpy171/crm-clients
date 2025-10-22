@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type {
   AppDispatch,
@@ -35,8 +35,13 @@ export const useLeads = () => {
   //   }
   // };
 
+  const mappedLeads = useMemo(
+    () => (leads ? leads.map(LeadMapper.toDomain) : []),
+    [leads]
+  );
+
   return {
-    leads: leads ? leads?.map(LeadMapper.toDomain) : [],
+    leads: mappedLeads,
     isLoading,
     error,
     handleGetLeads,

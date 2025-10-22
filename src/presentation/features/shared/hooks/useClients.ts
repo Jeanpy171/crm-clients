@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type {
   AppDispatch,
@@ -33,11 +33,11 @@ export const useClients = () => {
     try {
       const resultAction = await dispatch(saveClient(client));
       console.log("Resultado del saveClient:", resultAction);
-      
+
       if (saveClient.fulfilled.match(resultAction)) {
         const newClient = resultAction.payload;
         console.log("Nuevo cliente guardado exitosamente:", newClient);
-        
+
         addToast({
           title: "Cliente creado exitosamente",
           description: `El cliente ${newClient.name} ha sido creado`,
@@ -64,8 +64,13 @@ export const useClients = () => {
     }
   };
 
+  const mappedClients = useMemo(
+    () => (clients ? clients?.map(ClientMapper.toDomain) : []),
+    [clients]
+  );
+
   return {
-    clients: clients ? clients?.map(ClientMapper.toDomain) : [],
+    clients: mappedClients,
     isLoading,
     error,
     handleGetClients,

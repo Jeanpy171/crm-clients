@@ -12,16 +12,14 @@ import {
   Textarea,
   addToast,
 } from "@heroui/react";
-import type { Lead } from "../../../../../../core/domain/entities/Lead";
-import { Task } from "../../../../../../core/domain/entities/Task";
 import {
   TaskPriority,
   TaskStatus,
-  TaskType,
-} from "../../../../../../core/domain/value-objects/task";
-import type { CreateTaskDTO } from "../../../../../../core/application/dtos/tasks/CreateTaskDTO";
-import { TaskTypeDropdown } from "../../../../shared/components/task-type-dropdown/TaskTypeDropdown";
-import { TaskPriorityDropdown } from "../../../../shared/components/task-priority-dropdown/TaskPriorityDropdown";
+} from "../../../../../core/domain/value-objects/task";
+import type { CreateTaskDTO } from "../../../../../core/application/dtos/tasks/CreateTaskDTO";
+import { Task } from "../../../../../core/domain/entities/Task";
+import { TaskTypeDropdown } from "../task-type-dropdown/TaskTypeDropdown";
+import { TaskPriorityDropdown } from "../task-priority-dropdown/TaskPriorityDropdown";
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -127,7 +125,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             className="flex flex-col gap-1"
             onSubmit={handleSubmit}
           >
-            <input type="hidden" id="taskId" />
             <div className="form-group mb-4">
               <label
                 htmlFor="taskContact"
@@ -138,17 +135,21 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               <Select
                 id="taskContact"
                 placeholder="Seleccionar Contacto..."
-                selectedKeys={formData.leadId ? [formData.leadId] : []}
+                selectedKeys={
+                  formData.leadId ? new Set([formData.leadId]) : new Set()
+                }
                 onSelectionChange={(keys) => {
                   if (keys !== "all" && keys.size > 0) {
-                    console.warn("SELECCIONO ESTO: ", keys);
                     handleChange("leadId", Array.from(keys)[0].toString());
                   }
                 }}
                 required
               >
                 {contacts?.map((contact) => (
-                  <SelectItem key={contact.id}>
+                  <SelectItem
+                    key={contact.id}
+                    textValue={`${contact.name} - ${contact.company}`}
+                  >
                     {contact.name} - {contact.company}
                   </SelectItem>
                 ))}
@@ -172,32 +173,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 }}
               />
             </div>
-
-            {/*<div className="form-group mb-4">
-               <label
-                htmlFor="taskType"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Tipo de Tarea:
-              </label>
-              <Select
-                id="taskType"
-                selectedKeys={formData.type ? [formData.type] : []}
-                onSelectionChange={(keys) => {
-                  if (keys !== "all" && keys.size > 0) {
-                    handleChange("type", Array.from(keys)[0].toString());
-                  }
-                }}
-                required
-              >
-                <SelectItem key="Llamada">Llamada</SelectItem>
-                <SelectItem key="Mensaje">Mensaje</SelectItem>
-                <SelectItem key="Correo">Correo</SelectItem>
-                <SelectItem key="Reunión presencial">
-                  Reunión presencial
-                </SelectItem>
-              </Select>
-            </div> */}
             <div className="form-group mb-4">
               <label
                 htmlFor="taskDueDate"
@@ -232,34 +207,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 }
               />
             </div>
-            {/* <TaskPriorityDropdown
-              value={formData.type}
-              onChange={(value) => {
-                setFormData({ ...formData, priority: value });
-              }}
-            /> */}
-            {/* <div className="form-group mb-4">
-              <label
-                htmlFor="taskPriority"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Prioridad:
-              </label>
-              <Select
-                id="taskPriority"
-                selectedKeys={formData.priority ? [formData.priority] : []}
-                onSelectionChange={(keys) => {
-                  if (keys !== "all" && keys.size > 0) {
-                    handleChange("priority", Array.from(keys)[0].toString());
-                  }
-                }}
-                required
-              >
-                <SelectItem key="Alta">Alta</SelectItem>
-                <SelectItem key="Media">Media</SelectItem>
-                <SelectItem key="Baja">Baja</SelectItem>
-              </Select>
-            </div> */}
             <div className="form-group mb-4">
               <label
                 htmlFor="taskNotes"

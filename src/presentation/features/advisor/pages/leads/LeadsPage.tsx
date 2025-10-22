@@ -14,6 +14,8 @@ import { useAuth } from "../../../shared/hooks/useAuth";
 import { LeadsTable } from "./components/LeadsTable";
 import { ActivityHistoryModal } from "../../../shared/components/activity-history-modal/ActivityHistoryModal";
 import { ContactTracingModal } from "../../../shared/components/contact-tracing-modal/ContactTracingModal";
+import CreateTaskModal from "../../../shared/components/create-task-modal/CreateTaskModal";
+import { useTasks } from "../../../shared/hooks/useTasks";
 
 // interface AdvisorLeadsProps {
 //   leads: Lead[];
@@ -23,9 +25,11 @@ import { ContactTracingModal } from "../../../shared/components/contact-tracing-
 const LeadsPage = () => {
   const { user } = useAuth();
   const { leads, handleGetLeads } = useLeads();
+  const { isLoading, handleSaveTask } = useTasks();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isOpenViewModal, setIsOpenViewModal] = useState(false);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false);
+  const [isOpenCreateTask, setIsOpenCreateTask] = useState(false);
 
   useEffect(() => {
     if (!leads.length) {
@@ -43,6 +47,11 @@ const LeadsPage = () => {
     setIsOpenViewModal(true);
   };
 
+  const handleTaskCreate = (lead: Lead) => {
+    setSelectedLead(lead);
+    setIsOpenCreateTask(true);
+  };
+
   return (
     <div className="space-y-6">
       <ActivityHistoryModal
@@ -58,6 +67,24 @@ const LeadsPage = () => {
         isOpen={isOpenViewModal}
         contact={selectedLead?.data ?? null}
         onClose={() => setIsOpenViewModal(!isOpenViewModal)}
+      />
+      <CreateTaskModal
+        isOpen={isOpenCreateTask}
+        isLoading={isLoading}
+        advisor={user?.id ?? ""}
+        onClose={() => setIsOpenCreateTask(!isOpenCreateTask)}
+        onSave={handleSaveTask}
+        contacts={
+          selectedLead
+            ? [
+                {
+                  id: selectedLead.id,
+                  name: selectedLead.data.name,
+                  company: selectedLead.data.company,
+                },
+              ]
+            : []
+        }
       />
       <h2 className="text-2xl font-bold text-gray-800">Mis Leads</h2>
 
@@ -86,6 +113,7 @@ const LeadsPage = () => {
         data={leads}
         onDataView={handleOpenView}
         onHistoryView={handleOpenHistory}
+        onTaskCreate={handleTaskCreate}
       />
       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {leads?.map((lead) => (

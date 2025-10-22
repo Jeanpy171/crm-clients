@@ -11,7 +11,10 @@ import {
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import type { Lead } from "../../../../../../core/domain/entities/Lead";
-import { InterestLevel } from "../../../../../../core/domain/value-objects/contact";
+import {
+  InteractionPhase,
+  InterestLevel,
+} from "../../../../../../core/domain/value-objects/contact";
 
 interface KanbanCardProps {
   lead: Lead;
@@ -39,8 +42,8 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
     }
   };
 
-  const states = ["Calificar", "Desarrollar", "Proponer", "Cierre"];
-  const availableStates = states?.filter((state) => state !== currentState);
+  // const states = ["Calificar", "Desarrollar", "Proponer", "Cierre"];
+  // const availableStates = states?.filter((state) => state !== currentState);
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", lead.id);
@@ -89,16 +92,16 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
                 Editar
               </DropdownItem>
               {
-                availableStates.map((state: string) => (
+                Object.values(InteractionPhase).map((phase) => (
                   <DropdownItem
-                    key={`move-to-${state}`}
+                    key={`move-to-${phase}`}
                     startContent={<Icon icon="lucide:move-right" />}
                     onPress={(e: any) => {
                       e.stopPropagation();
-                      onMove(lead.id, state);
+                      onMove(lead.id, phase);
                     }}
                   >
-                    Mover a {state}
+                    Mover a {phase}
                   </DropdownItem>
                 )) as any
               }
