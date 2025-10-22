@@ -36,6 +36,26 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
     whatsMissing: ''
   });
 
+  // Limpiar formulario cuando el modal se cierre
+  React.useEffect(() => {
+    if (!isOpen) {
+      setFormData({
+        name: '',
+        phone: '',
+        sector: '',
+        currentProvider: '',
+        currentPlanValue: '',
+        serviceTime: '',
+        satisfactionRating: '',
+        improvementAreas: '',
+        preferredPlan: '',
+        interestLevel: '',
+        interestInNewService: '',
+        whatsMissing: ''
+      });
+    }
+  }, [isOpen]);
+
   const handleChange = (field: string, value: string) => {
     // Validaciones específicas por campo
     if (field === 'name') {
@@ -118,6 +138,8 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
     e.preventDefault();
     if (isFormValid()) {
       onSave(formData);
+      // Cerrar el modal después de guardar exitosamente
+      onClose();
     }
   };
 
