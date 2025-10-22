@@ -1,6 +1,5 @@
 import type { CatalogDTO } from "../../../core/application/dtos/catalogs/CatalogDTO";
 import type { TaskDTO } from "../../../core/application/dtos/tasks/TaskDTO";
-import type { Task } from "../../../core/domain/entities/Task";
 import type { ITaskRepository } from "../../../core/domain/repositories/ITaskRepository";
 import { CatalogMapper } from "../../http/mappers/CatalogMapper";
 
@@ -103,7 +102,7 @@ export class MockTaskRepository implements ITaskRepository {
     // await this.http.delete(`/api/tasks/${id}`);
   }
 
-  async patch(id: string, updates: Partial<Task>): Promise<void> {
+  async patch(id: string, updates: Partial<TaskDTO>): Promise<void> {
     // await this.http.patch(`/api/tasks/${id}`, JSON.stringify(updates));
   }
 }

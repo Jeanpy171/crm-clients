@@ -1,7 +1,6 @@
 import type { ITaskRepository } from "../../../core/domain/repositories/ITaskRepository";
 import { HttpClient } from "../http-client";
 import type { TaskDTO } from "../../../core/application/dtos/tasks/TaskDTO";
-import type { Task } from "../../../core/domain/entities/Task";
 import { TaskMapper } from "../mappers/TaskMapper";
 import type { CatalogDTO } from "../../../core/application/dtos/catalogs/CatalogDTO";
 
@@ -9,7 +8,7 @@ export class HttpTaskRepository implements ITaskRepository {
   private http = HttpClient.getInstance();
 
   async getAll(): Promise<TaskDTO[]> {
-    const response = await this.http.get<Task[]>("/api/tasks");
+    const response = await this.http.get<any[]>("/api/tasks");
     const data = response as any[];
     return data.map(TaskMapper.fromApiToDto);
   }
@@ -40,7 +39,7 @@ export class HttpTaskRepository implements ITaskRepository {
     await this.http.delete(`/api/tasks/${id}`);
   }
 
-  async patch(id: string, updates: Partial<Task>): Promise<void> {
+  async patch(id: string, updates: Partial<TaskDTO>): Promise<void> {
     await this.http.patch(`/api/tasks/${id}`, JSON.stringify(updates));
   }
 }

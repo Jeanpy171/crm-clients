@@ -15,6 +15,5 @@ export interface ContactDTO {
   createdAt: string;
   lastActivity: string;
   followUpNotes: string;
-
   advisor?: string;
 }

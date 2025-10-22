@@ -21,9 +21,17 @@ import { GetServiceSatisfactionCatalogUseCase } from "../core/application/use-ca
 import { GetServiceDurationCatalogUseCase } from "../core/application/use-cases/contact/GetServiceDurationCatalogUseCase";
 import { GetCurrentPlanCostCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentPlanCostCatalogUseCase";
 import { GetCurrentProviderCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentProviderCatalogUseCase";
+import { GetLeadsUseCase } from "../core/application/use-cases/leads/GetLeadsUseCase";
+import { MockLeadRepository } from "../infrastructure/mock/repositories/MockLeadRepository";
+import { MockClientRepository } from "../infrastructure/mock/repositories/MockClientRepository";
+import { GetClientsUseCase } from "../core/application/use-cases/clients/GetClientsUseCase";
+import { SaveClientUseCase } from "../core/application/use-cases/clients/SaveClientUseCase";
+import { SaveLeadUseCase } from "../core/application/use-cases/leads/SaveLeadUseCase";
 
 class DIContainer {
   // ============ MOCK REPOSITORIES ============
+  private clientRepository = new MockClientRepository();
+  private leadRepository = new MockLeadRepository();
   private taskRepository = new MockTaskRepository();
   private userRepository = new MockUserRepository();
   private contactStatusRepository = new MockContactRepository();
@@ -72,7 +80,13 @@ class DIContainer {
     this.contactStatusRepository
   );
 
+  // ============ USE CASES - Clients ============
+  getClientsUseCase = new GetClientsUseCase(this.clientRepository);
+  saveClientUseCase = new SaveClientUseCase(this.clientRepository);
+
   // ============ USE CASES - LEADS ============
+  getLeadsUseCase = new GetLeadsUseCase(this.leadRepository);
+  saveLeadUseCase = new SaveLeadUseCase(this.leadRepository);
   // createLeadUseCase = new CreateLeadUseCase(this.leadRepository);
   // updateLeadUseCase = new UpdateLeadUseCase(this.leadRepository);
   // updateLeadStatusUseCase = new UpdateLeadStatusUseCase(this.leadRepository);

@@ -3,6 +3,8 @@ import { configureStore } from "@reduxjs/toolkit";
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 import authReducer from "../store/slices/auth";
+import clientReducer from "../store/slices/clients";
+import leadReducer from "../store/slices/leads";
 import taskReducer from "../store/slices/tasks";
 import taskPriorityReducer from "../store/slices/taskPriorities";
 import taskTypeReducer from "../store/slices/taskTypes";
@@ -22,6 +24,8 @@ import currentProviderReducer from "../store/slices/currentProvider";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    clients: clientReducer,
+    leads: leadReducer,
     tasks: taskReducer,
     taskPriorities: taskPriorityReducer,
     taskTypes: taskTypeReducer,
