@@ -9,7 +9,7 @@ interface ColumnProps {
   dragState?: {
     originColumnId: string | null;
     isDragging: boolean;
-    onDragStart: () => void;
+    onDragStart: (columnId: string) => void;
     onDragEnd?: () => void;
   }; // opcional
 }
