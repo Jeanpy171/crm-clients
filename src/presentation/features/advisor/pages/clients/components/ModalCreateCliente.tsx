@@ -7,6 +7,7 @@ import { AreasForImprovementDropdown } from '../../../../shared/components/areas
 import { ServiceSatisfactionDropdown } from '../../../../shared/components/service-satisfaction-dropdown/ServiceSatisfactionDropdown';
 import { ServiceDurationDropdown } from '../../../../shared/components/service-duration-dropdown/ServiceDurationDropdown';
 import { CurrentProviderDropdown } from '../../../../shared/components/current-provider-dropdown/CurrentProviderDropdown';
+import { CurrentPlanCostDropdown } from '../../../../shared/components/current-plan-cost-dropdown/CurrentPlanCostDropdown';
 
 interface CreateClientModalProps {
   isOpen: boolean;
@@ -24,7 +25,6 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
     name: '',
     phone: '',
     sector: '',
-    currentCompany: '',
     currentProvider: '',
     currentPlanValue: '',
     serviceTime: '',
@@ -49,6 +49,30 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
       const cleanValue = value.replace(/[^0-9]/g, '');
       const limitedValue = cleanValue.substring(0, 10);
       setFormData(prev => ({ ...prev, [field]: limitedValue }));
+    } else if (field === 'interestInNewService') {
+      // Mapear el valor de InterestInNewService a InterestLevel
+      const mapToInterestLevel = (interestInNewService: string): string => {
+        switch (interestInNewService) {
+          case '1_NOT_VERY_INTERESTED':
+            return 'NOT VERY INTERESTED';
+          case '2_NOT_INTERESTED':
+            return 'NOT VERY INTERESTED';
+          case '3_SOMEWHAT_INTERESTED':
+            return 'INTERESTED';
+          case '4_INTERESTED':
+            return 'INTERESTED';
+          case '5_VERY_INTERESTED_INTERESTED':
+            return 'VERY INTERESTED';
+          default:
+            return 'INTERESTED';
+        }
+      };
+      
+      setFormData(prev => ({ 
+        ...prev, 
+        [field]: value,
+        interestLevel: mapToInterestLevel(value)
+      }));
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
     }
@@ -78,9 +102,23 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
     }
   };
 
+  const isFormValid = () => {
+    // Excluir interestLevel de la validación ya que se llena automáticamente
+    const { interestLevel, ...fieldsToValidate } = formData;
+    return Object.values(fieldsToValidate).every(value => value.trim() !== '');
+  };
+
+  const getCompletedFieldsCount = () => {
+    // Excluir interestLevel del conteo ya que se llena automáticamente
+    const { interestLevel, ...fieldsToCount } = formData;
+    return Object.values(fieldsToCount).filter(value => value.trim() !== '').length;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    if (isFormValid()) {
+      onSave(formData);
+    }
   };
 
   return (
@@ -90,6 +128,19 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
           <>
             <ModalHeader className="flex flex-col gap-1">
               <h3 className="text-lg sm:text-xl">Crear Nuevo Cliente</h3>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    style={{ 
+                      width: `${(getCompletedFieldsCount() / 11) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+                <span className="text-xs font-medium">
+                  {getCompletedFieldsCount()}/11 campos completados
+                </span>
+              </div>
             </ModalHeader>
             <ModalBody className="max-h-[70vh] overflow-y-auto">
               <form id="createClientForm" onSubmit={handleSubmit}>
@@ -152,7 +203,7 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     value={formData.currentCompany}
                     onValueChange={(value) => handleChange('currentCompany', value)}
                     isRequired
-                  />
+                  />*/}
                   <CurrentPlanCostDropdown 
                     value={formData.currentPlanValue} 
                     onChange={(value) => handleChange('currentPlanValue', value)} 
@@ -275,6 +326,8 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     value={formData.interestInNewService} 
                     onChange={(value) => handleChange('interestInNewService', value)} 
                   />
+                  
+                  {/* Nota: El nivel de interés se llena automáticamente basado en la selección anterior */}
 
                   {/* Campo anterior: Select manual para nivel de interés */}
                   {/* <Select
@@ -315,8 +368,16 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
               <Button color="danger" variant="light" onPress={onClose}>
                 Cancelar
               </Button>
-              <Button color="primary" type="submit" form="createClientForm">
-                Crear Cliente
+              <Button 
+                color="primary" 
+                type="submit" 
+                form="createClientForm"
+                isDisabled={!isFormValid()}
+              >
+                {isFormValid() 
+                  ? "Crear Cliente" 
+                  : `Completar formulario (${getCompletedFieldsCount()}/11)`
+                }
               </Button>
             </ModalFooter>
           </>
