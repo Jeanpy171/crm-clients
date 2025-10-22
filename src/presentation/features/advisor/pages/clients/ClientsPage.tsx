@@ -1,4 +1,4 @@
-import { Card, CardBody } from "@heroui/react";
+import { Button, Card, CardBody } from "@heroui/react";
 import { InteractionPhaseDropdown } from "../../../shared/components/interaction-phase-dropdown/InteractionPhaseDropdown";
 import { ContactStatusDropdown } from "../../../shared/components/contact-status-dropdown/ContactStatusDropdown";
 import { InterestLevelDropdown } from "../../../shared/components/interest-level-dropdown/InterestLevelDropdown";
@@ -7,19 +7,87 @@ import type { Client } from "../../../../../core/domain/entities/Client";
 import { ClientsTable } from "./components/ClientsTable";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../shared/hooks/useAuth";
-import { ContactTracingModal } from "../../../shared/components/contact-tracing-modal/ContactTracingModal";
 import { ActivityHistoryModal } from "../../../shared/components/activity-history-modal/ActivityHistoryModal";
+import { Icon } from "@iconify/react";
+import CreateClientModal from "./components/ModalCreateCliente";
+import {
+  ContactStatus,
+  InteractionPhase,
+  InterestLevel,
+} from "../../../../../core/domain/value-objects/contact";
+import type { ClientDTO } from "../../../../../core/application/dtos/clients/ClientDTO";
 
-// interface AdvisorClientsProps {
-//   leads: Lead[];
-//   onLeadClick: (lead: Lead) => void;
-// }
+/*
+
+  const handleCreateClient = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSaveClient = async (clientData: any) => {
+    console.log("Datos del cliente creado:", clientData);
+    console.log("User ID actual:", user?.id);
+
+    try {
+      // Map form data to ClientDTO
+      const clientDTO: ClientDTO = {
+        id: `client_${Date.now()}`, // Generate unique ID
+        name: clientData.name,
+        company: clientData.currentProvider || clientData.currentCompany || "Sin empresa",
+        email: clientData.email || "", // Default empty email
+        phone: clientData.phone,
+        interactionPhase: InteractionPhase.GRADE, // Default for clients
+        interestLevel: clientData.interestLevel || InterestLevel.INTEREST,
+        status: ContactStatus.PROSPECT, // Default status for clients
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        followUpNotes: clientData.whatsMissing || "",
+        advisor: user?.id || "",
+      };
+
+      console.log("ClientDTO a guardar:", clientDTO);
+      
+      await saveClient(clientDTO);
+      console.log("Cliente guardado exitosamente, cerrando modal");
+      setIsModalOpen(false);
+
+      // Refresh clients list to ensure it's updated
+      console.log("Refrescando lista de clientes con advisor ID:", user?.id);
+      handleGetClients(user?.id ?? "");
+    } catch (error) {
+      console.error("Error al guardar el cliente:", error);
+    }
+  };
+
+  const onClientClick = (client: Client) => {};
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
+        <Button
+          color="primary"
+          onPress={handleCreateClient}
+          startContent={<Icon icon="lucide:plus" />}
+        >
+          Nuevo cliente
+        </Button>
+      </div>
+*/
 
 const ClientsPage = () => {
-  const { clients, handleGetClients } = useClients();
+  const {
+    clients,
+    handleGetClients,
+    handleSaveClient: saveClient,
+  } = useClients();
   const { user } = useAuth();
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false);
+  const [isOpenCreateClient, setIsOpenCreateClient] = useState(false);
 
   useEffect(() => {
     if (!clients.length) {
@@ -32,6 +100,44 @@ const ClientsPage = () => {
     setIsOpenHistoryModal(true);
   };
 
+  const handleSaveClient = async (clientData: any) => {
+    console.log("Datos del cliente creado:", clientData);
+    console.log("User ID actual:", user?.id);
+
+    try {
+      // Map form data to ClientDTO
+      const clientDTO: ClientDTO = {
+        id: `client_${Date.now()}`, // Generate unique ID
+        name: clientData.name,
+        company:
+          clientData.currentProvider ||
+          clientData.currentCompany ||
+          "Sin empresa",
+        email: clientData.email || "", // Default empty email
+        phone: clientData.phone,
+        interactionPhase: InteractionPhase.GRADE, // Default for clients
+        interestLevel: clientData.interestLevel || InterestLevel.INTEREST,
+        status: ContactStatus.PROSPECT, // Default status for clients
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        followUpNotes: clientData.whatsMissing || "",
+        advisor: user?.id || "",
+      };
+
+      console.log("ClientDTO a guardar:", clientDTO);
+
+      await saveClient(clientDTO);
+      console.log("Cliente guardado exitosamente, cerrando modal");
+      setIsOpenCreateClient(false);
+
+      // Refresh clients list to ensure it's updated
+      console.log("Refrescando lista de clientes con advisor ID:", user?.id);
+      handleGetClients(user?.id ?? "");
+    } catch (error) {
+      console.error("Error al guardar el cliente:", error);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <ActivityHistoryModal
@@ -41,6 +147,12 @@ const ClientsPage = () => {
         contact={selectedClient?.data ?? null}
         onClose={() => setIsOpenHistoryModal(!isOpenHistoryModal)}
       />
+      <CreateClientModal
+        isOpen={isOpenCreateClient}
+        onClose={() => setIsOpenCreateClient(!isOpenCreateClient)}
+        onSave={handleSaveClient}
+      />
+
       {/* <ContactTracingModal
         size="4xl"
         // scrollBehavior="inside"
@@ -48,8 +160,16 @@ const ClientsPage = () => {
         contact={selectedClient?.data ?? null}
         onClose={() => setIsOpenDetailModal(!isOpenDetailModal)}
       /> */}
-      <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
-
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
+        <Button
+          color="primary"
+          onPress={() => setIsOpenCreateClient(true)}
+          startContent={<Icon icon="lucide:plus" />}
+        >
+          Nuevo cliente
+        </Button>
+      </div>
       {/* Filters */}
       <div className="flex flex-wrap gap-4">
         <InteractionPhaseDropdown value={""} onChange={() => {}} />
@@ -104,62 +224,7 @@ const ClientsPage = () => {
         </Card>
       </div>
 
-      {/* Clients Grid */}
-
       <ClientsTable data={clients} onHistoryView={handleOpenHistory} />
-
-      {/* {clients
-          ?.filter(
-            (client) =>
-              client.data.interactionPhase === InteractionPhase.CLOSING
-          )
-          .map((client) => (
-            <ClientsTable data={clients} />
-            // <ContactCard contact={client} onClick={onClientClick} />
-            // <Card
-            //   key={client.id}
-            //   shadow="sm"
-            //   className="cursor-pointer hover:shadow-md transition-shadow"
-            //   onClick={() => onClientClick(client)}
-            // >
-            //   <CardBody className="p-4">
-            //     <div className="flex justify-between items-start mb-2">
-            //       <h4 className="font-medium">{client.data.name}</h4>
-            //       <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-            //         {client.data.status}
-            //       </span>
-            //     </div>
-
-            //     <div className="space-y-1 text-sm text-gray-600">
-            //       <p>
-            //         <Icon icon="lucide:phone" className="inline w-4 h-4 mr-1" />
-            //         {client.data.phone}
-            //       </p>
-            //       <p>
-            //         <Icon
-            //           icon="lucide:building"
-            //           className="inline w-4 h-4 mr-1"
-            //         />
-            //         {client.data.company}
-            //       </p>
-            //       <p>
-            //         <Icon
-            //           icon="lucide:calendar"
-            //           className="inline w-4 h-4 mr-1"
-            //         />
-            //         Cliente desde:{" "}
-            //         {new Date(client.data.lastActivity).toLocaleDateString()}
-            //       </p>
-            //     </div>
-
-            //     <div className="mt-3 pt-3 border-t border-gray-200">
-            //       <p className="text-xs text-gray-500">
-            //         Plan actual: Pendiente
-            //       </p>
-            //     </div>
-            //   </CardBody>
-            // </Card>
-          ))} */}
     </div>
   );
 };

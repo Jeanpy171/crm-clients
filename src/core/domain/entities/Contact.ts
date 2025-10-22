@@ -111,7 +111,7 @@ export class Contact {
       //   preferredPlan: this.preferredPlan,
       //   interestLevel: this.interestLevel,
       //   whatsMissing: this.whatsMissing!,
-      advisor: this.advisor!,
+      advisor: this.advisor || "",
     };
   }
 }

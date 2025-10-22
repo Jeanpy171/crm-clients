@@ -39,13 +39,6 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Tablero Kanban - Mis clientes</h2>
-        <Button
-          color="primary"
-          onPress={onCreateLead}
-          startContent={<Icon icon="lucide:plus" />}
-        >
-          Nuevo cliente
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

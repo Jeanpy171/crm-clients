@@ -56,3 +56,252 @@ export const interestLevelMocks = [
     interest_level_description: "Poco interesado",
   },
 ];
+
+export const housingSectorMocks = [
+  {
+    housing_sector_id: "sector_quito_sur",
+    housing_sector_name: "QUITO_SUR",
+    housing_sector_description: "Quito Sur",
+  },
+  {
+    housing_sector_id: "sector_quito_centro",
+    housing_sector_name: "QUITO_CENTRO",
+    housing_sector_description: "Quito Centro",
+  },
+  {
+    housing_sector_id: "sector_quito_norte",
+    housing_sector_name: "QUITO_NORTE",
+    housing_sector_description: "Quito Norte",
+  },
+  {
+    housing_sector_id: "sector_cuenca",
+    housing_sector_name: "CUENCA",
+    housing_sector_description: "Cuenca",
+  },
+];
+
+export const interestInNewServiceMocks = [
+  {
+    interest_in_new_service_id: "not_very_interested",
+    interest_in_new_service_name: "NOT_VERY_INTERESTED",
+    interest_in_new_service_description: "Poco interesado",
+  },
+  {
+    interest_in_new_service_id: "not_interested",
+    interest_in_new_service_name: "NOT_INTERESTED",
+    interest_in_new_service_description: "No interesado",
+  },
+  {
+    interest_in_new_service_id: "somewhat_interested",
+    interest_in_new_service_name: "SOMEWHAT_INTERESTED",
+    interest_in_new_service_description: "Algo interesado",
+  },
+  {
+    interest_in_new_service_id: "interested",
+    interest_in_new_service_name: "INTERESTED",
+    interest_in_new_service_description: "Interesado",
+  },
+  {
+    interest_in_new_service_id: "very_interested",
+    interest_in_new_service_name: "VERY_INTERESTED_INTERESTED",
+    interest_in_new_service_description: "Muy interesado",
+  },
+];
+
+export const preferredPlanMocks = [
+  {
+    preferred_plan_id: "megas_250",
+    preferred_plan_name: "MEGAS_250",
+    preferred_plan_description: "250 Megas",
+  },
+  {
+    preferred_plan_id: "megas_300",
+    preferred_plan_name: "MEGAS_300",
+    preferred_plan_description: "300 Megas",
+  },
+  {
+    preferred_plan_id: "megas_400",
+    preferred_plan_name: "MEGAS_400",
+    preferred_plan_description: "400 Megas",
+  },
+  {
+    preferred_plan_id: "other",
+    preferred_plan_name: "OTHER",
+    preferred_plan_description: "Otro",
+  },
+];
+
+export const areasForImprovementMocks = [
+  {
+    areas_for_improvement_id: "speed",
+    areas_for_improvement_name: "SPEED",
+    areas_for_improvement_description: "Velocidad",
+  },
+  {
+    areas_for_improvement_id: "price",
+    areas_for_improvement_name: "PRICE",
+    areas_for_improvement_description: "Precio",
+  },
+  {
+    areas_for_improvement_id: "attention",
+    areas_for_improvement_name: "ATTENTION",
+    areas_for_improvement_description: "Atención",
+  },
+  {
+    areas_for_improvement_id: "service_quality",
+    areas_for_improvement_name: "SERVICE_QUALITY",
+    areas_for_improvement_description: "Calidad del servicio",
+  },
+];
+
+export const serviceSatisfactionMocks = [
+  {
+    service_satisfaction_id: "bad",
+    service_satisfaction_name: "BAD",
+    service_satisfaction_description: "1. Malo",
+  },
+  {
+    service_satisfaction_id: "regular",
+    service_satisfaction_name: "REGULAR",
+    service_satisfaction_description: "2. Regular",
+  },
+  {
+    service_satisfaction_id: "good",
+    service_satisfaction_name: "GOOD",
+    service_satisfaction_description: "3. Bueno",
+  },
+  {
+    service_satisfaction_id: "very_good",
+    service_satisfaction_name: "VERY_GOOD",
+    service_satisfaction_description: "4. Muy bueno",
+  },
+  {
+    service_satisfaction_id: "excellent",
+    service_satisfaction_name: "EXCELLENT",
+    service_satisfaction_description: "5. Excelente",
+  },
+];
+
+export const serviceDurationMocks = [
+  {
+    service_duration_id: "1_to_6_months",
+    service_duration_name: "BETWEEN_1_AND_6_MONTHS",
+    service_duration_description: "1 a 6 meses",
+  },
+  {
+    service_duration_id: "7_to_12_months",
+    service_duration_name: "BETWEEN_7_AND_12_MONTHS",
+    service_duration_description: "7 a 12 meses",
+  },
+  {
+    service_duration_id: "13_to_18_months",
+    service_duration_name: "BETWEEN_13_AND_18_MONTHS",
+    service_duration_description: "13 a 18 meses",
+  },
+  {
+    service_duration_id: "25_to_36_months",
+    service_duration_name: "BETWEEN_25_AND_36_MONTHS",
+    service_duration_description: "25 a 36 meses",
+  },
+  {
+    service_duration_id: "more_than_3_years",
+    service_duration_name: "MORE_THAN_3_YEARS",
+    service_duration_description: "Más de 3 años",
+  },
+];
+
+export const currentPlanCostMocks = [
+  {
+    current_plan_cost_id: "15_to_20",
+    current_plan_cost_name: "BETWEEN_15_AND_20",
+    current_plan_cost_description: "15-20 USD",
+  },
+  {
+    current_plan_cost_id: "21_to_25",
+    current_plan_cost_name: "BETWEEN_21_AND_25",
+    current_plan_cost_description: "21-25 USD",
+  },
+  {
+    current_plan_cost_id: "26_to_30",
+    current_plan_cost_name: "BETWEEN_26_AND_30",
+    current_plan_cost_description: "26-30 USD",
+  },
+  {
+    current_plan_cost_id: "more_than_30",
+    current_plan_cost_name: "MORE_THAN_30",
+    current_plan_cost_description: "Más de 30 USD",
+  },
+];
+
+export const currentProviderMocks = [
+  {
+    current_provider_id: "etapa",
+    current_provider_name: "ETAPA",
+    current_provider_description: "ETAPA",
+  },
+  {
+    current_provider_id: "miranet",
+    current_provider_name: "MIRANET",
+    current_provider_description: "MIRANET",
+  },
+  {
+    current_provider_id: "celerity",
+    current_provider_name: "CELERITY",
+    current_provider_description: "CELERITY",
+  },
+  {
+    current_provider_id: "gonet",
+    current_provider_name: "GONET",
+    current_provider_description: "GONET",
+  },
+  {
+    current_provider_id: "servicable",
+    current_provider_name: "SERVICABLE",
+    current_provider_description: "SERVICABLE",
+  },
+  {
+    current_provider_id: "netlife",
+    current_provider_name: "NETLIFE",
+    current_provider_description: "NETLIFE",
+  },
+  {
+    current_provider_id: "hallo",
+    current_provider_name: "HALLO",
+    current_provider_description: "HALLO",
+  },
+  {
+    current_provider_id: "sistelcel",
+    current_provider_name: "SISTELCEL",
+    current_provider_description: "SISTELCEL",
+  },
+  {
+    current_provider_id: "xtrim",
+    current_provider_name: "XTRIM",
+    current_provider_description: "XTRIM",
+  },
+  {
+    current_provider_id: "citycom",
+    current_provider_name: "CITYCOM",
+    current_provider_description: "CITYCOM",
+  },
+  {
+    current_provider_id: "astronet",
+    current_provider_name: "ASTRONET",
+    current_provider_description: "ASTRONET",
+  },
+  {
+    current_provider_id: "cb_vision",
+    current_provider_name: "CB_VISION",
+    current_provider_description: "CB VISION",
+  },
+  {
+    current_provider_id: "no_sae",
+    current_provider_name: "NO_SAE",
+    current_provider_description: "NO SAE",
+  },
+  {
+    current_provider_id: "otros",
+    current_provider_name: "OTROS",
+    current_provider_description: "Otros",
+  },
+];

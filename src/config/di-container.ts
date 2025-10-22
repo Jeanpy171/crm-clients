@@ -13,6 +13,14 @@ import { MockContactRepository } from "../infrastructure/mock/repositories/MockC
 import { GetContactStatusCatalogUseCase } from "../core/application/use-cases/contact/GetContactStatusCatalogUseCase";
 import { GetInteractionPhaseCatalogUseCase } from "../core/application/use-cases/contact/GetInteractionPhaseCatalogUseCase";
 import { GetInterestLevelCatalogUseCase } from "../core/application/use-cases/contact/GetInterestLevelCatalogUseCase";
+import { GetHousingSectorCatalogUseCase } from "../core/application/use-cases/contact/GetHousingSectorCatalogUseCase";
+import { GetInterestInNewServiceCatalogUseCase } from "../core/application/use-cases/contact/GetInterestInNewServiceCatalogUseCase";
+import { GetPreferredPlanCatalogUseCase } from "../core/application/use-cases/contact/GetPreferredPlanCatalogUseCase";
+import { GetAreasForImprovementCatalogUseCase } from "../core/application/use-cases/contact/GetAreasForImprovementCatalogUseCase";
+import { GetServiceSatisfactionCatalogUseCase } from "../core/application/use-cases/contact/GetServiceSatisfactionCatalogUseCase";
+import { GetServiceDurationCatalogUseCase } from "../core/application/use-cases/contact/GetServiceDurationCatalogUseCase";
+import { GetCurrentPlanCostCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentPlanCostCatalogUseCase";
+import { GetCurrentProviderCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentProviderCatalogUseCase";
 import { GetLeadsUseCase } from "../core/application/use-cases/leads/GetLeadsUseCase";
 import { MockLeadRepository } from "../infrastructure/mock/repositories/MockLeadRepository";
 import { MockClientRepository } from "../infrastructure/mock/repositories/MockClientRepository";
@@ -45,6 +53,30 @@ class DIContainer {
     this.contactStatusRepository
   );
   getInterestLevelUseCase = new GetInterestLevelCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getHousingSectorUseCase = new GetHousingSectorCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getInterestInNewServiceUseCase = new GetInterestInNewServiceCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getPreferredPlanUseCase = new GetPreferredPlanCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getAreasForImprovementUseCase = new GetAreasForImprovementCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getServiceSatisfactionUseCase = new GetServiceSatisfactionCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getServiceDurationUseCase = new GetServiceDurationCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getCurrentPlanCostUseCase = new GetCurrentPlanCostCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getCurrentProviderUseCase = new GetCurrentProviderCatalogUseCase(
     this.contactStatusRepository
   );
 
