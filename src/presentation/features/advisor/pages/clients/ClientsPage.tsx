@@ -5,9 +5,10 @@ import { InterestLevelDropdown } from "../../../shared/components/interest-level
 import { useClients } from "../../../shared/hooks/useClients";
 import type { Client } from "../../../../../core/domain/entities/Client";
 import { ClientsTable } from "./components/ClientsTable";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../shared/hooks/useAuth";
 import { Icon } from "@iconify/react";
+import CreateClientModal from "./components/ModalCreateCliente";
 
 // interface AdvisorClientsProps {
 //   leads: Lead[];
@@ -17,12 +18,27 @@ import { Icon } from "@iconify/react";
 const ClientsPage = () => {
   const { clients, handleGetClients } = useClients();
   const { user } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (!clients.length) {
       handleGetClients(user?.id ?? "");
     }
   }, [user]);
+
+  const handleCreateClient = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSaveClient = (clientData: any) => {
+    console.log("Datos del cliente creado:", clientData);
+    // Aquí puedes procesar los datos del cliente
+    setIsModalOpen(false);
+  };
 
   const onClientClick = (client: Client) => {};
 
@@ -32,7 +48,7 @@ const ClientsPage = () => {
         <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
         <Button
           color="primary"
-          onPress={() => {}}
+          onPress={handleCreateClient}
           startContent={<Icon icon="lucide:plus" />}
         >
           Nuevo cliente
@@ -152,6 +168,13 @@ const ClientsPage = () => {
             // </Card>
           ))} */}
       </div>
+      
+      {/* Modal para crear nuevo cliente */}
+      <CreateClientModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onSave={handleSaveClient}
+      />
     </div>
   );
 };
