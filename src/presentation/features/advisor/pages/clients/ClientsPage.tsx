@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../shared/hooks/useAuth";
 import { Icon } from "@iconify/react";
 import CreateClientModal from "./components/ModalCreateCliente";
+import { InteractionPhase, InterestLevel, ContactStatus } from "../../../../../core/domain/value-objects/contact";
+import type { ClientDTO } from "../../../../../core/application/dtos/clients/ClientDTO";
 
 // interface AdvisorClientsProps {
 //   leads: Lead[];
@@ -16,7 +18,7 @@ import CreateClientModal from "./components/ModalCreateCliente";
 // }
 
 const ClientsPage = () => {
-  const { clients, handleGetClients } = useClients();
+  const { clients, handleGetClients, handleSaveClient: saveClient } = useClients();
   const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -34,10 +36,39 @@ const ClientsPage = () => {
     setIsModalOpen(false);
   };
 
-  const handleSaveClient = (clientData: any) => {
+  const handleSaveClient = async (clientData: any) => {
     console.log("Datos del cliente creado:", clientData);
-    // Aquí puedes procesar los datos del cliente
-    setIsModalOpen(false);
+    console.log("User ID actual:", user?.id);
+
+    try {
+      // Map form data to ClientDTO
+      const clientDTO: ClientDTO = {
+        id: `client_${Date.now()}`, // Generate unique ID
+        name: clientData.name,
+        company: clientData.currentProvider || clientData.currentCompany || "Sin empresa",
+        email: clientData.email || "", // Default empty email
+        phone: clientData.phone,
+        interactionPhase: InteractionPhase.GRADE, // Default for clients
+        interestLevel: clientData.interestLevel || InterestLevel.INTEREST,
+        status: ContactStatus.PROSPECT, // Default status for clients
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        followUpNotes: clientData.whatsMissing || "",
+        advisor: user?.id || "",
+      };
+
+      console.log("ClientDTO a guardar:", clientDTO);
+      
+      await saveClient(clientDTO);
+      console.log("Cliente guardado exitosamente, cerrando modal");
+      setIsModalOpen(false);
+
+      // Refresh clients list to ensure it's updated
+      console.log("Refrescando lista de clientes con advisor ID:", user?.id);
+      handleGetClients(user?.id ?? "");
+    } catch (error) {
+      console.error("Error al guardar el cliente:", error);
+    }
   };
 
   const onClientClick = (client: Client) => {};

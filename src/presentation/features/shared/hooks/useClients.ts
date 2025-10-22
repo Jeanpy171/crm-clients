@@ -25,20 +25,39 @@ export const useClients = () => {
   // }, [clients]);
 
   const handleGetClients = (advisorId: string) => {
+    console.log("handleGetClients llamado con advisorId:", advisorId);
     dispatch(getClients({ page: 1, limit: 20, advisorId }));
   };
 
   const handleSaveClient = async (client: ClientDTO) => {
-    const resultAction = await dispatch(saveClient(client));
-    console.error(resultAction);
-    if (saveClient.fulfilled.match(resultAction)) {
-      const newClient = resultAction.payload;
-      console.log("Nuevo cliente guardado:", newClient);
-    } else {
-      console.error("Error al guardar el cliente");
+    try {
+      const resultAction = await dispatch(saveClient(client));
+      console.log("Resultado del saveClient:", resultAction);
+      
+      if (saveClient.fulfilled.match(resultAction)) {
+        const newClient = resultAction.payload;
+        console.log("Nuevo cliente guardado exitosamente:", newClient);
+        
+        addToast({
+          title: "Cliente creado exitosamente",
+          description: `El cliente ${newClient.name} ha sido creado`,
+          color: "success",
+          timeout: 2500,
+        });
+      } else if (saveClient.rejected.match(resultAction)) {
+        console.error("Error al guardar el cliente:", resultAction.error);
+        addToast({
+          title: "Error al registrar el cliente",
+          description: resultAction.error.message || "Error in save client",
+          color: "danger",
+          timeout: 2500,
+        });
+      }
+    } catch (error) {
+      console.error("Error inesperado al guardar el cliente:", error);
       addToast({
         title: "Error al registrar el cliente",
-        description: error || "Error in save client",
+        description: "Error inesperado al guardar el cliente",
         color: "danger",
         timeout: 2500,
       });

@@ -7,6 +7,12 @@ import { ClientMapper } from "../../http/mappers/ClientMapper";
 import { clientMocks } from "../data/clientMock";
 
 export class MockClientRepository implements IClientRepository {
+  private clients: ClientDTO[] = [];
+
+  constructor() {
+    // Initialize with mock data
+    this.clients = clientMocks.map(ClientMapper.fromApiToDto);
+  }
   async getAll({
     page,
     limit,
@@ -15,12 +21,14 @@ export class MockClientRepository implements IClientRepository {
     console.warn("ADVISOR ID: ", advisorId);
     return new Promise((resolve) => {
       setTimeout(() => {
-        const data = clientMocks as any[];
-        let clients = data.map(ClientMapper.fromApiToDto);
+        let clients = [...this.clients]; // Use the persistent clients array
 
         if (advisorId) {
+          console.log("Filtrando clientes por advisorId:", advisorId);
+          console.log("Total de clientes antes del filtro:", clients.length);
           clients = clients.filter((client) => client.advisor === advisorId);
-          //   console.warn("CLIENTES FILTRADOS: ", clients);
+          console.warn("CLIENTES FILTRADOS: ", clients);
+          console.log("Total de clientes después del filtro:", clients.length);
         }
 
         resolve(clients);
@@ -55,13 +63,22 @@ export class MockClientRepository implements IClientRepository {
   }
 
   async save(client: ClientDTO): Promise<ClientDTO> {
-    // const dto = TaskMapper.toDomain(task);
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(client);
+        // Generate a unique ID if not provided
+        const clientWithId = {
+          ...client,
+          id: client.id || `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        };
+        
+        // Add the new client to the persistent array
+        this.clients.push(clientWithId);
+        
+        console.log("Cliente guardado en mock repository:", clientWithId);
+        console.log("Total de clientes en repositorio:", this.clients.length);
+        resolve(clientWithId);
       }, 1500);
     });
-    // await this.http.post(`/api/tasks/`, JSON.stringify(dto));
   }
 
   async delete(id: string): Promise<void> {
