@@ -18,7 +18,7 @@ export const ServiceSatisfactionDropdown = ({
   return (
     <Select
       label="Satisfacción del servicio"
-      className="w-full sm:w-48"
+      className="w-full"
       aria-label="Seleccionar satisfacción del servicio"
       value={value ?? ""}
       isLoading={isLoading}

@@ -18,7 +18,7 @@ export const PreferredPlanDropdown = ({
   return (
     <Select
       label="Plan preferido"
-      className="w-full sm:w-48"
+      className="w-full"
       aria-label="Seleccionar plan preferido"
       value={value ?? ""}
       isLoading={isLoading}

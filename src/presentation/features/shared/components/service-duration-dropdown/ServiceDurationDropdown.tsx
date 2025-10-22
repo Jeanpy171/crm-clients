@@ -18,7 +18,7 @@ export const ServiceDurationDropdown = ({
   return (
     <Select
       label="Tiempo con el servicio actual"
-      className="w-full sm:w-48"
+      className="w-full"
       aria-label="Seleccionar tiempo con el servicio actual"
       value={value ?? ""}
       isLoading={isLoading}

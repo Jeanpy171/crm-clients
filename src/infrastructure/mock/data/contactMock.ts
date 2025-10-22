@@ -232,3 +232,76 @@ export const currentPlanCostMocks = [
     current_plan_cost_description: "Más de 30 USD",
   },
 ];
+
+export const currentProviderMocks = [
+  {
+    current_provider_id: "etapa",
+    current_provider_name: "ETAPA",
+    current_provider_description: "ETAPA",
+  },
+  {
+    current_provider_id: "miranet",
+    current_provider_name: "MIRANET",
+    current_provider_description: "MIRANET",
+  },
+  {
+    current_provider_id: "celerity",
+    current_provider_name: "CELERITY",
+    current_provider_description: "CELERITY",
+  },
+  {
+    current_provider_id: "gonet",
+    current_provider_name: "GONET",
+    current_provider_description: "GONET",
+  },
+  {
+    current_provider_id: "servicable",
+    current_provider_name: "SERVICABLE",
+    current_provider_description: "SERVICABLE",
+  },
+  {
+    current_provider_id: "netlife",
+    current_provider_name: "NETLIFE",
+    current_provider_description: "NETLIFE",
+  },
+  {
+    current_provider_id: "hallo",
+    current_provider_name: "HALLO",
+    current_provider_description: "HALLO",
+  },
+  {
+    current_provider_id: "sistelcel",
+    current_provider_name: "SISTELCEL",
+    current_provider_description: "SISTELCEL",
+  },
+  {
+    current_provider_id: "xtrim",
+    current_provider_name: "XTRIM",
+    current_provider_description: "XTRIM",
+  },
+  {
+    current_provider_id: "citycom",
+    current_provider_name: "CITYCOM",
+    current_provider_description: "CITYCOM",
+  },
+  {
+    current_provider_id: "astronet",
+    current_provider_name: "ASTRONET",
+    current_provider_description: "ASTRONET",
+  },
+  {
+    current_provider_id: "cb_vision",
+    current_provider_name: "CB_VISION",
+    current_provider_description: "CB VISION",
+  },
+  {
+    current_provider_id: "no_sae",
+    current_provider_name: "NO_SAE",
+    current_provider_description: "NO SAE",
+  },
+  {
+    current_provider_id: "otros",
+    current_provider_name: "OTROS",
+    current_provider_description: "Otros",
+  },
+];

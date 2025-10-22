@@ -18,7 +18,7 @@ export const InterestInNewServiceDropdown = ({
   return (
     <Select
       label="Interés en nuevos servicios"
-      className="w-full sm:w-48"
+      className="w-full"
       aria-label="Seleccionar interés en nuevos servicios"
       value={value ?? ""}
       isLoading={isLoading}

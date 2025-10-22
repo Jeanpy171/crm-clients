@@ -20,6 +20,7 @@ import { GetAreasForImprovementCatalogUseCase } from "../core/application/use-ca
 import { GetServiceSatisfactionCatalogUseCase } from "../core/application/use-cases/contact/GetServiceSatisfactionCatalogUseCase";
 import { GetServiceDurationCatalogUseCase } from "../core/application/use-cases/contact/GetServiceDurationCatalogUseCase";
 import { GetCurrentPlanCostCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentPlanCostCatalogUseCase";
+import { GetCurrentProviderCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentProviderCatalogUseCase";
 
 class DIContainer {
   // ============ MOCK REPOSITORIES ============
@@ -65,6 +66,9 @@ class DIContainer {
     this.contactStatusRepository
   );
   getCurrentPlanCostUseCase = new GetCurrentPlanCostCatalogUseCase(
+    this.contactStatusRepository
+  );
+  getCurrentProviderUseCase = new GetCurrentProviderCatalogUseCase(
     this.contactStatusRepository
   );
 

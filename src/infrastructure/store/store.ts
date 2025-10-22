@@ -17,6 +17,7 @@ import areasForImprovementReducer from "../store/slices/areasForImprovement";
 import serviceSatisfactionReducer from "../store/slices/serviceSatisfaction";
 import serviceDurationReducer from "../store/slices/serviceDuration";
 import currentPlanCostReducer from "../store/slices/currentPlanCost";
+import currentProviderReducer from "../store/slices/currentProvider";
 
 export const store = configureStore({
   reducer: {
@@ -35,5 +36,6 @@ export const store = configureStore({
     serviceSatisfactions: serviceSatisfactionReducer,
     serviceDurations: serviceDurationReducer,
     currentPlanCosts: currentPlanCostReducer,
+    currentProviders: currentProviderReducer,
   },
 });

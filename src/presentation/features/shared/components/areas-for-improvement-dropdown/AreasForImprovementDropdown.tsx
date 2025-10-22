@@ -18,7 +18,7 @@ export const AreasForImprovementDropdown = ({
   return (
     <Select
       label="Áreas de mejora"
-      className="w-full sm:w-48"
+      className="w-full"
       aria-label="Seleccionar áreas de mejora"
       value={value ?? ""}
       isLoading={isLoading}

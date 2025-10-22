@@ -12,6 +12,7 @@ import {
   serviceSatisfactionMocks,
   serviceDurationMocks,
   currentPlanCostMocks,
+  currentProviderMocks,
 } from "../data/contactMock";
 
 export class MockContactRepository implements IContactRepository {
@@ -178,6 +179,23 @@ export class MockContactRepository implements IContactRepository {
               id: "current_plan_cost_id",
               name: "current_plan_cost_name",
               description: "current_plan_cost_description",
+            })
+          )
+        );
+      }, 1500);
+    });
+  }
+
+  async getCurrentProviderCatalog(): Promise<CatalogDTO[]> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const data = currentProviderMocks as any[];
+        resolve(
+          data.map((values) =>
+            CatalogMapper.fromApiToDto(values, {
+              id: "current_provider_id",
+              name: "current_provider_name",
+              description: "current_provider_description",
             })
           )
         );

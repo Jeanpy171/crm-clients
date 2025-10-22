@@ -18,7 +18,7 @@ export const CurrentPlanCostDropdown = ({
   return (
     <Select
       label="Valor del plan actual"
-      className="w-full sm:w-48"
+      className="w-full"
       aria-label="Seleccionar valor del plan actual"
       value={value ?? ""}
       isLoading={isLoading}

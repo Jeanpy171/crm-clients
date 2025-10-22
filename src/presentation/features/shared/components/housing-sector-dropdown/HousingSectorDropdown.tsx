@@ -18,7 +18,7 @@ export const HousingSectorDropdown = ({
   return (
     <Select
       label="Sector de vivienda"
-      className="w-full sm:w-48"
+      className="w-full"
       aria-label="Seleccionar sector de vivienda"
       value={value ?? ""}
       isLoading={isLoading}

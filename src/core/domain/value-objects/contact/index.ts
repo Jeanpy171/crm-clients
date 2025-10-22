@@ -8,3 +8,4 @@ export { AreasForImprovement } from "./AreasForImprovement";
 export { ServiceSatisfaction } from "./ServiceSatisfaction";
 export { ServiceDuration } from "./ServiceDuration";
 export { CurrentPlanCost } from "./CurrentPlanCost";
+export { CurrentProvider } from "./CurrentProvider";

@@ -8,6 +8,7 @@ import { ServiceSatisfactionDropdown } from '../../../../shared/components/servi
 import { InterestLevelDropdown } from '../../../../shared/components/interest-level-dropdown/InterestLevelDropdown';
 import { ServiceDurationDropdown } from '../../../../shared/components/service-duration-dropdown/ServiceDurationDropdown';
 import { CurrentPlanCostDropdown } from '../../../../shared/components/current-plan-cost-dropdown/CurrentPlanCostDropdown';
+import { CurrentProviderDropdown } from '../../../../shared/components/current-provider-dropdown/CurrentProviderDropdown';
 
 interface CreateClientModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
     phone: '',
     sector: '',
     currentCompany: '',
+    currentProvider: '',
     currentPlanValue: '',
     serviceTime: '',
     satisfactionRating: '',
@@ -87,8 +89,12 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                   /> */}
                   
                   
+                  <CurrentProviderDropdown 
+                    value={formData.currentProvider} 
+                    onChange={(value) => handleChange('currentProvider', value)} 
+                  />
                   
-                  <Input
+                  {/*<Input
                     label="Nombre de la empresa con la que cuenta actualmente el servicio"
                     placeholder="Ej: Netlife, Claro, Fibr"
                     value={formData.currentCompany}
@@ -115,6 +121,7 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     <SelectItem key="26-30 USD">26-30 USD</SelectItem>
                     <SelectItem key="MAYOR A 30 USD">MAYOR A 30 USD</SelectItem
                   </Select> */}
+                  
                   {/* Dropdown para tiempo con el servicio actual */}
                   <ServiceDurationDropdown 
                     value={formData.serviceTime} 

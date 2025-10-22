@@ -11,4 +11,5 @@ export interface IContactRepository {
   getServiceSatisfactionCatalog(): Promise<CatalogDTO[]>;
   getServiceDurationCatalog(): Promise<CatalogDTO[]>;
   getCurrentPlanCostCatalog(): Promise<CatalogDTO[]>;
+  getCurrentProviderCatalog(): Promise<CatalogDTO[]>;
 }
