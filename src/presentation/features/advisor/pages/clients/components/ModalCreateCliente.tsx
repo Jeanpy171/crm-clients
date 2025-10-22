@@ -1,13 +1,11 @@
 import React from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Select, SelectItem, Textarea } from '@heroui/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Textarea } from '@heroui/react';
 import { PreferredPlanDropdown } from '../../../../shared/components/preferred-plan-dropdown/PreferredPlanDropdown';
 import { HousingSectorDropdown } from '../../../../shared/components/housing-sector-dropdown/HousingSectorDropdown';
 import { InterestInNewServiceDropdown } from '../../../../shared/components/interest-in-new-service-dropdown/InterestInNewServiceDropdown';
 import { AreasForImprovementDropdown } from '../../../../shared/components/areas-for-improvement-dropdown/AreasForImprovementDropdown';
 import { ServiceSatisfactionDropdown } from '../../../../shared/components/service-satisfaction-dropdown/ServiceSatisfactionDropdown';
-import { InterestLevelDropdown } from '../../../../shared/components/interest-level-dropdown/InterestLevelDropdown';
 import { ServiceDurationDropdown } from '../../../../shared/components/service-duration-dropdown/ServiceDurationDropdown';
-import { CurrentPlanCostDropdown } from '../../../../shared/components/current-plan-cost-dropdown/CurrentPlanCostDropdown';
 import { CurrentProviderDropdown } from '../../../../shared/components/current-provider-dropdown/CurrentProviderDropdown';
 
 interface CreateClientModalProps {
@@ -39,7 +37,45 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
   });
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    // Validaciones específicas por campo
+    if (field === 'name') {
+      // Solo permite letras, espacios y caracteres especiales del español
+      const cleanValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+      // Limitar a 50 caracteres
+      const limitedValue = cleanValue.substring(0, 50);
+      setFormData(prev => ({ ...prev, [field]: limitedValue }));
+    } else if (field === 'phone') {
+      // Solo permite números y limita a 10 dígitos
+      const cleanValue = value.replace(/[^0-9]/g, '');
+      const limitedValue = cleanValue.substring(0, 10);
+      setFormData(prev => ({ ...prev, [field]: limitedValue }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
+  };
+
+  const handleKeyPress = (field: string, e: React.KeyboardEvent) => {
+    if (field === 'name') {
+      // Prevenir entrada de números y caracteres especiales en el nombre
+      const allowedChars = /[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/;
+      if (!allowedChars.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+        e.preventDefault();
+      }
+    } else if (field === 'phone') {
+      // Prevenir entrada de letras y caracteres especiales en el teléfono
+      const allowedChars = /[0-9]/;
+      const currentValue = formData.phone;
+      
+      // Si ya tiene 10 dígitos y no es una tecla de borrado, prevenir entrada
+      if (currentValue.length >= 10 && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+        e.preventDefault();
+        return;
+      }
+      
+      if (!allowedChars.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+        e.preventDefault();
+      }
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -63,7 +99,15 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     placeholder="Ej: Juan Pérez"
                     value={formData.name}
                     onValueChange={(value) => handleChange('name', value)}
+                    onKeyDown={(e) => handleKeyPress('name', e)}
                     isRequired
+                    description="Solo letras y espacios, máximo 50 caracteres"
+                    validate={(value) => {
+                      if (!value) return "Nombre es requerido";
+                      if (value.length > 50) return "Máximo 50 caracteres";
+                      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) return "Solo letras y espacios";
+                      return true;
+                    }}
                   />
                   
                   <Input
@@ -71,7 +115,15 @@ const CreateClientModal: React.FC<CreateClientModalProps> = ({
                     placeholder="Ej: 0999999999"
                     value={formData.phone}
                     onValueChange={(value) => handleChange('phone', value)}
+                    onKeyDown={(e) => handleKeyPress('phone', e)}
                     isRequired
+                    description="Solo números, máximo 10 dígitos"
+                    validate={(value) => {
+                      if (!value) return "Teléfono es requerido";
+                      if (!/^\d+$/.test(value)) return "Solo números";
+                      if (value.length > 10) return "Máximo 10 dígitos";
+                      return true;
+                    }}
                   />
                   {/* Nuevo dropdown para sector de vivienda */}
                   <HousingSectorDropdown 
