@@ -16,7 +16,6 @@ export class MockTaskRepository implements ITaskRepository {
     return new Promise((resolve) => {
       setTimeout(() => {
         const data = taskMocks as any[];
-        console.warn("TASK EN MOCK: ", data);
         resolve(data.map(TaskMapper.fromApiToDto));
       }, 1500);
     });
@@ -43,7 +42,6 @@ export class MockTaskRepository implements ITaskRepository {
     return new Promise((resolve) => {
       setTimeout(() => {
         const data = taskTypesMock as any[];
-        console.warn("TASK EN MOCK: ", data);
         resolve(
           data.map((values) =>
             CatalogMapper.fromApiToDto(values, {
@@ -61,7 +59,6 @@ export class MockTaskRepository implements ITaskRepository {
     return new Promise((resolve) => {
       setTimeout(() => {
         const data = taskPrioritiesMock as any[];
-        console.warn("TASK EN MOCK: ", data);
         resolve(
           data.map((values) =>
             CatalogMapper.fromApiToDto(values, {

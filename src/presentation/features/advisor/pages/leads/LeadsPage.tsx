@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardBody, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import type { Lead } from "../../../../../core/domain/entities/Lead";
@@ -11,6 +11,9 @@ import { useInteractionPhases } from "../../../shared/hooks/useInteractionPhases
 import { useInterestLevels } from "../../../shared/hooks/useInterestLevels";
 import { ContactCard } from "../../../shared/components/contact-card/ContactCard";
 import { useAuth } from "../../../shared/hooks/useAuth";
+import { LeadsTable } from "./components/LeadsTable";
+import { ActivityHistoryModal } from "../../../shared/components/activity-history-modal/ActivityHistoryModal";
+import { ContactTracingModal } from "../../../shared/components/contact-tracing-modal/ContactTracingModal";
 
 // interface AdvisorLeadsProps {
 //   leads: Lead[];
@@ -20,17 +23,42 @@ import { useAuth } from "../../../shared/hooks/useAuth";
 const LeadsPage = () => {
   const { user } = useAuth();
   const { leads, handleGetLeads } = useLeads();
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isOpenViewModal, setIsOpenViewModal] = useState(false);
+  const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false);
 
   useEffect(() => {
     if (!leads.length) {
       handleGetLeads(user?.id ?? "");
     }
-  }, [user]);
+  }, [user, leads]);
 
-  const onLeadClick = (lead: Lead) => {};
+  const handleOpenHistory = (lead: Lead) => {
+    setSelectedLead(lead);
+    setIsOpenHistoryModal(true);
+  };
+
+  const handleOpenView = (lead: Lead) => {
+    setSelectedLead(lead);
+    setIsOpenViewModal(true);
+  };
 
   return (
     <div className="space-y-6">
+      <ActivityHistoryModal
+        size="4xl"
+        // scrollBehavior="inside"
+        isOpen={isOpenHistoryModal}
+        contact={selectedLead?.data ?? null}
+        onClose={() => setIsOpenHistoryModal(!isOpenHistoryModal)}
+      />
+      <ContactTracingModal
+        size="4xl"
+        // scrollBehavior="inside"
+        isOpen={isOpenViewModal}
+        contact={selectedLead?.data ?? null}
+        onClose={() => setIsOpenViewModal(!isOpenViewModal)}
+      />
       <h2 className="text-2xl font-bold text-gray-800">Mis Leads</h2>
 
       {/* Filters */}
@@ -54,7 +82,12 @@ const LeadsPage = () => {
       </div>
 
       {/* Leads Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <LeadsTable
+        data={leads}
+        onDataView={handleOpenView}
+        onHistoryView={handleOpenHistory}
+      />
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {leads?.map((lead) => (
           <ContactCard contact={lead} onClick={onLeadClick} />
           //   <Card
@@ -109,7 +142,7 @@ const LeadsPage = () => {
           //     </CardBody>
           //   </Card>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

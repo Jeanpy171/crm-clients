@@ -1,14 +1,17 @@
-import { Select, SelectItem } from "@heroui/react";
+import { Select, SelectItem, type SelectProps } from "@heroui/react";
 import type { InterestLevel } from "../../../../../core/domain/value-objects/contact";
 import { useInterestLevels } from "../../hooks/useInterestLevels";
+
+interface InterestLevelDropdownProps
+  extends Omit<SelectProps, "onChange" | "children"> {
+  onChange: (arg0: InterestLevel) => void;
+}
 
 export const InterestLevelDropdown = ({
   value,
   onChange,
-}: {
-  value: string | null;
-  onChange: (arg0: InterestLevel) => void;
-}) => {
+  ...rest
+}: InterestLevelDropdownProps) => {
   const { interestLevels, isLoading, error } = useInterestLevels();
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -24,6 +27,7 @@ export const InterestLevelDropdown = ({
       isLoading={isLoading}
       errorMessage={error}
       onChange={handleSelectionChange}
+      {...rest}
     >
       {interestLevels.map((status) => (
         <SelectItem key={status.name}>{status.description}</SelectItem>

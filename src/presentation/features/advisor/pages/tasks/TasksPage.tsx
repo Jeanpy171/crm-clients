@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardBody, Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Task } from "../../../../../core/domain/entities/Task";
@@ -15,6 +15,9 @@ import { TaskTypeDropdown } from "../../../shared/components/task-type-dropdown/
 import { useTaskStatus } from "../../../shared/hooks/useTaskStatus";
 import { useTaskPriorities } from "../../../shared/hooks/useTaskPriorities";
 import { useTaskTypes } from "../../../shared/hooks/useTaskTypes";
+import { useAuth } from "../../../shared/hooks/useAuth";
+import { useLeads } from "../../../shared/hooks/useLeads";
+import { useClients } from "../../../shared/hooks/useClients";
 
 interface AdvisorTasksProps {
   //   tasks: Task[];
@@ -62,7 +65,10 @@ const TasksPage: React.FC<AdvisorTasksProps> = ({
   onCloseTask,
   onTaskClick,
 }) => {
+  const { user } = useAuth();
   const { tasks, error, isLoading, handleSaveTask } = useTasks();
+  const { leads, handleGetLeads } = useLeads();
+  const { clients, handleGetClients } = useClients();
   const [taskStatusFilter, setTaskStatusFilter] = useState<TaskStatus | null>(
     null
   );
@@ -75,8 +81,30 @@ const TasksPage: React.FC<AdvisorTasksProps> = ({
   //     isLoading: isTaskStatusLoading,
   //     error: taskStatusError,
   //   } = useTaskStatus();
-  const leads: Lead[] = [];
   const [isOpenModal, setIsOpenModal] = useState(false);
+
+  useEffect(() => {
+    if (!clients.length) {
+      handleGetClients(user?.id ?? "");
+    }
+  }, [user, clients]);
+
+  useEffect(() => {
+    if (!leads.length) {
+      handleGetLeads(user?.id ?? "");
+    }
+  }, [user, leads]);
+
+  const contacts = useMemo(() => {
+    const mixedContacts = [...clients, ...leads];
+    const formattedData = mixedContacts.map((contact: any) => ({
+      id: contact?.id,
+      name: contact?.data?.name || "",
+      company: contact?.data?.company || "",
+    }));
+
+    return formattedData;
+  }, [clients, leads]);
 
   const sortedTasks = useMemo(() => {
     const openTasks =
@@ -173,9 +201,10 @@ const TasksPage: React.FC<AdvisorTasksProps> = ({
       <CreateTaskModal
         isOpen={isOpenModal}
         isLoading={isLoading}
+        advisor={user?.id ?? ""}
         onClose={() => setIsOpenModal(false)}
         onSave={handleSaveTask}
-        leads={leads}
+        contacts={contacts}
       />
 
       {/* Task Filters */}

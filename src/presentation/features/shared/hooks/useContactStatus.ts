@@ -23,9 +23,9 @@ export const useContactStatus = () => {
   };
 
   const getStatusDescriptionByName = (name: string) => {
-    if (!contactStatus.length) return name;
-
-    return contactStatus.find((status) => status.name === name)?.description;
+    return (
+      contactStatus.find((status) => status.name === name)?.description || name
+    );
   };
 
   return { contactStatus, isLoading, error, getStatusDescriptionByName };

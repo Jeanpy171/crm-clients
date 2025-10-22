@@ -1,14 +1,17 @@
-import { Select, SelectItem } from "@heroui/react";
+import { Select, SelectItem, type SelectProps } from "@heroui/react";
 import { useTaskStatus } from "../../hooks/useTaskStatus";
 import type { TaskStatus } from "../../../../../core/domain/value-objects/task";
+
+interface TaskStatusDropdownProps
+  extends Omit<SelectProps, "onChange" | "children"> {
+  onChange: (arg0: TaskStatus) => void;
+}
 
 export const TaskStatusDropdown = ({
   value,
   onChange,
-}: {
-  value: string | null;
-  onChange: (arg0: TaskStatus) => void;
-}) => {
+  ...rest
+}: TaskStatusDropdownProps) => {
   const { taskStatus, isLoading, error } = useTaskStatus();
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -24,6 +27,7 @@ export const TaskStatusDropdown = ({
       isLoading={isLoading}
       errorMessage={error}
       onChange={handleSelectionChange}
+      {...rest}
     >
       {taskStatus.map((status) => (
         <SelectItem key={status.name}>{status.description}</SelectItem>

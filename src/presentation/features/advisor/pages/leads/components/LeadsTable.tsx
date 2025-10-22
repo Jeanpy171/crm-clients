@@ -5,6 +5,8 @@ import { useInteractionPhases } from "../../../../shared/hooks/useInteractionPha
 import { useInterestLevels } from "../../../../shared/hooks/useInterestLevels";
 import { useContactStatus } from "../../../../shared/hooks/useContactStatus";
 import { Button, Chip } from "@heroui/react";
+import type { Task } from "../../../../../../core/domain/entities/Task";
+import type { Lead } from "../../../../../../core/domain/entities/Lead";
 
 const columns = [
   { name: "CLIENTE", uid: "name" },
@@ -16,19 +18,21 @@ const columns = [
   { name: "ACCIONES", uid: "actions" },
 ];
 
-export const ClientsTable = ({
+export const LeadsTable = ({
   data,
+  onDataView,
   onHistoryView,
 }: {
   data: Client[];
-  onHistoryView: (arg0: Client) => void;
+  onDataView: (arg0: Lead) => void;
+  onHistoryView: (arg0: Lead) => void;
 }) => {
   const { getPhaseDescriptionByName } = useInteractionPhases();
   const { getInterestDescriptionByName } = useInterestLevels();
   const { getStatusDescriptionByName } = useContactStatus();
 
   const renderCell = useCallback(
-    (data: Client, columnKey: string) => {
+    (data: Lead, columnKey: string) => {
       const {
         name,
         email,
@@ -69,19 +73,26 @@ export const ClientsTable = ({
         case "actions":
           return (
             <div className="flex gap-2">
-              {/* <Button
-                    onPress={() => {
-                    onDataView(data);
-                    }}
-                >
-                    Ver
-                </Button> */}
+              <Button
+                onPress={() => {
+                  onDataView(data);
+                }}
+              >
+                Ver
+              </Button>
               <Button
                 onPress={() => {
                   onHistoryView(data);
                 }}
               >
                 Historial
+              </Button>
+              <Button
+                onPress={() => {
+                  onHistoryView(data);
+                }}
+              >
+                Nueva Tarea
               </Button>
             </div>
           );

@@ -5,8 +5,10 @@ import { InterestLevelDropdown } from "../../../shared/components/interest-level
 import { useClients } from "../../../shared/hooks/useClients";
 import type { Client } from "../../../../../core/domain/entities/Client";
 import { ClientsTable } from "./components/ClientsTable";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../shared/hooks/useAuth";
+import { ContactTracingModal } from "../../../shared/components/contact-tracing-modal/ContactTracingModal";
+import { ActivityHistoryModal } from "../../../shared/components/activity-history-modal/ActivityHistoryModal";
 
 // interface AdvisorClientsProps {
 //   leads: Lead[];
@@ -16,17 +18,36 @@ import { useAuth } from "../../../shared/hooks/useAuth";
 const ClientsPage = () => {
   const { clients, handleGetClients } = useClients();
   const { user } = useAuth();
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false);
 
   useEffect(() => {
     if (!clients.length) {
       handleGetClients(user?.id ?? "");
     }
-  }, [user]);
+  }, [user, clients]);
 
-  const onClientClick = (client: Client) => {};
+  const handleOpenHistory = (client: Client) => {
+    setSelectedClient(client);
+    setIsOpenHistoryModal(true);
+  };
 
   return (
     <div className="space-y-6">
+      <ActivityHistoryModal
+        size="4xl"
+        // scrollBehavior="inside"
+        isOpen={isOpenHistoryModal}
+        contact={selectedClient?.data ?? null}
+        onClose={() => setIsOpenHistoryModal(!isOpenHistoryModal)}
+      />
+      {/* <ContactTracingModal
+        size="4xl"
+        // scrollBehavior="inside"
+        isOpen={isOpenDetailModal}
+        contact={selectedClient?.data ?? null}
+        onClose={() => setIsOpenDetailModal(!isOpenDetailModal)}
+      /> */}
       <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
 
       {/* Filters */}
@@ -84,13 +105,10 @@ const ClientsPage = () => {
       </div>
 
       {/* Clients Grid */}
-      <div className="">
-        {clients ? (
-          <ClientsTable data={clients} totalPages={10} />
-        ) : (
-          <p>Sin clientes por mostrar</p>
-        )}
-        {/* {clients
+
+      <ClientsTable data={clients} onHistoryView={handleOpenHistory} />
+
+      {/* {clients
           ?.filter(
             (client) =>
               client.data.interactionPhase === InteractionPhase.CLOSING
@@ -142,7 +160,6 @@ const ClientsPage = () => {
             //   </CardBody>
             // </Card>
           ))} */}
-      </div>
     </div>
   );
 };

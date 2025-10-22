@@ -26,7 +26,8 @@ import { TaskPriorityDropdown } from "../../../../shared/components/task-priorit
 interface CreateTaskModalProps {
   isOpen: boolean;
   isLoading: boolean;
-  leads: Lead[];
+  contacts: { id: string; name: string; company: string }[];
+  advisor: string;
   onClose: () => void;
   onSave: (taskData: any) => void;
 }
@@ -34,7 +35,8 @@ interface CreateTaskModalProps {
 const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   isOpen,
   isLoading,
-  leads,
+  contacts,
+  advisor,
   onClose,
   onSave,
 }) => {
@@ -87,7 +89,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
         duration: formData.duration,
         notes: formData.notes,
         priority: formData.priority || TaskPriority.AVARAGE,
-        advisor: "Juan Pérez", // Assuming current user
+        advisor: advisor, // Assuming current user
       };
       const task = Task.create(newTask);
       onSave(task.toJSON());
@@ -120,37 +122,57 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           </h3>
         </ModalHeader>
         <ModalBody>
-          <form id="taskForm" onSubmit={handleSubmit}>
+          <form
+            id="taskForm"
+            className="flex flex-col gap-1"
+            onSubmit={handleSubmit}
+          >
             <input type="hidden" id="taskId" />
             <div className="form-group mb-4">
               <label
-                htmlFor="taskLead"
+                htmlFor="taskContact"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Lead:
+                Contacto:
               </label>
               <Select
-                id="taskLead"
-                placeholder="Seleccionar lead..."
+                id="taskContact"
+                placeholder="Seleccionar Contacto..."
                 selectedKeys={formData.leadId ? [formData.leadId] : []}
                 onSelectionChange={(keys) => {
                   if (keys !== "all" && keys.size > 0) {
+                    console.warn("SELECCIONO ESTO: ", keys);
                     handleChange("leadId", Array.from(keys)[0].toString());
                   }
                 }}
                 required
               >
-                {leads?.map((lead) => (
-                  <SelectItem key={lead.id}>{lead.data.name}</SelectItem>
+                {contacts?.map((contact) => (
+                  <SelectItem key={contact.id}>
+                    {contact.name} - {contact.company}
+                  </SelectItem>
                 ))}
               </Select>
             </div>
-            <TaskTypeDropdown
-              value={formData.type}
-              onChange={(value) => {
-                setFormData({ ...formData, type: value });
-              }}
-            />
+            <div className="flex gap-3 mb-2">
+              <TaskTypeDropdown
+                placeholder="Tipo de Tarea"
+                labelPlacement="outside"
+                value={formData.type}
+                onChange={(value) => {
+                  setFormData({ ...formData, type: value });
+                }}
+              />
+              <TaskPriorityDropdown
+                placeholder="Prioridad"
+                labelPlacement="outside"
+                value={formData.priority}
+                onChange={(value) => {
+                  setFormData({ ...formData, priority: value });
+                }}
+              />
+            </div>
+
             {/*<div className="form-group mb-4">
                <label
                 htmlFor="taskType"
@@ -210,12 +232,12 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 }
               />
             </div>
-            <TaskPriorityDropdown
+            {/* <TaskPriorityDropdown
               value={formData.type}
               onChange={(value) => {
                 setFormData({ ...formData, priority: value });
               }}
-            />
+            /> */}
             {/* <div className="form-group mb-4">
               <label
                 htmlFor="taskPriority"

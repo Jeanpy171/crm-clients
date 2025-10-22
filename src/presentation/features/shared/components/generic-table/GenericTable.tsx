@@ -193,6 +193,7 @@ export default function GenericTable<T>({
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn
+            className="bg-blue-400 text-white"
             key={String(column.uid)}
             align={column.uid === "actions" ? "center" : "start"}
           >

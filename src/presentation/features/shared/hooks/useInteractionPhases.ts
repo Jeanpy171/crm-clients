@@ -23,10 +23,10 @@ export const useInteractionPhases = () => {
   };
 
   const getPhaseDescriptionByName = (name: string) => {
-    if (!interactionPhases.length) return name;
-
-    return interactionPhases.find((status) => status.name === name)
-      ?.description;
+    return (
+      interactionPhases.find((status) => status.name === name)?.description ||
+      name
+    );
   };
 
   return { interactionPhases, isLoading, error, getPhaseDescriptionByName };
