@@ -83,17 +83,17 @@ const TasksPage: React.FC<AdvisorTasksProps> = ({
   //   } = useTaskStatus();
   const [isOpenModal, setIsOpenModal] = useState(false);
 
-  useEffect(() => {
-    if (!clients.length) {
-      handleGetClients(user?.id ?? "");
-    }
-  }, [user, clients]);
+  // useEffect(() => {
+  //   if (!clients.length) {
+  //     handleGetClients(user?.id ?? "");
+  //   }
+  // }, [user, clients]);
 
-  useEffect(() => {
-    if (!leads.length) {
-      handleGetLeads(user?.id ?? "");
-    }
-  }, [user, leads]);
+  // useEffect(() => {
+  //   if (!leads.length) {
+  //     handleGetLeads(user?.id ?? "");
+  //   }
+  // }, [user, leads]);
 
   const contacts = useMemo(() => {
     const mixedContacts = [...clients, ...leads];
@@ -122,7 +122,7 @@ const TasksPage: React.FC<AdvisorTasksProps> = ({
 
   const getLeadName = (leadId: string) => {
     const lead = leads?.find((l) => l.id === leadId);
-    return lead ? lead.data.name : "Cliente desconocido";
+    return lead ? lead.name : "Cliente desconocido";
   };
 
   const formatDate = (date: Date) => {

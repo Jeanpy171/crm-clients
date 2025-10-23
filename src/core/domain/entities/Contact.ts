@@ -1,4 +1,6 @@
+import { container } from "../../../config/di-container";
 import type { ContactDTO } from "../../application/dtos/contact/ContactDTO";
+import type { HistoryDTO } from "../../application/dtos/contact/HistoryDTO";
 import type {
   ContactStatus,
   InteractionPhase,
@@ -10,6 +12,7 @@ import { InterestLevelVO } from "../value-objects/contact/InterestLevel";
 
 export class Contact {
   private constructor(
+    public id: string,
     public name: string,
     public company: string,
     public email: string,
@@ -21,6 +24,7 @@ export class Contact {
     public createdAt: Date,
     public lastActivity: Date,
     public followUpNotes: string,
+    public history: HistoryDTO[],
     // public currentCompany: string,
     // public currentPlanValue: string,
     // public serviceTime: string,
@@ -32,6 +36,7 @@ export class Contact {
   ) {}
 
   static create(props: {
+    id: string;
     name: string;
     company: string;
     email: string;
@@ -54,12 +59,15 @@ export class Contact {
     // preferredPlan: string;
     // interestLevel: string;
     // whatsMissing?: string;
+    history: HistoryDTO[];
     advisor?: string;
   }): Contact {
     const interactionPhase = InteractionPhaseVO.create(props.interactionPhase);
     const contactState = ContactStatusVO.create(props.status);
     const interestLevel = InterestLevelVO.create(props.interestLevel);
     return new Contact(
+      props.id,
+      // Date.now().toString() + Math.random().toString(36).substr(2, 9),
       props.name,
       props.company,
       props.email,
@@ -70,6 +78,7 @@ export class Contact {
       new Date(props.createdAt),
       new Date(props.lastActivity),
       props.followUpNotes,
+      props.history,
       //   props.phone,
       //   props.sector,
       //   state.value,
@@ -87,8 +96,23 @@ export class Contact {
     );
   }
 
+  getHistory() {
+    return this.history;
+  }
+
+  setHisyoty(history: HistoryDTO[]) {
+    this.history = history;
+  }
+
+  // async getHistory(id: string): Promise<HistoryDTO[]> {
+  //   const historyUseCase = container.getHistoryUseCase;
+  //   const history = await historyUseCase.execute(id);
+  //   return history;
+  // }
+
   toJSON(): ContactDTO {
     return {
+      id: this.id,
       name: this.name,
       company: this.company,
       email: this.email,
@@ -99,6 +123,7 @@ export class Contact {
       createdAt: this.createdAt.toISOString(),
       lastActivity: this.lastActivity.toISOString(),
       followUpNotes: this.followUpNotes,
+      history: this.history,
       //   sector: this.sector,
       //   state: this.state,
       //   interest: this.interest,

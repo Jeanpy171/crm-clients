@@ -5,12 +5,12 @@ import {
 } from "@reduxjs/toolkit";
 import { container } from "../../../config/di-container";
 import { addToast } from "@heroui/react";
-import type { ClientDTO } from "../../../core/application/dtos/clients/ClientDTO";
 import type { LeadDTO } from "../../../core/application/dtos/leads/LeadDTO";
 import type { FilterLeadsParams } from "../../../core/domain/repositories/ILeadRepository";
+import type { ContactDTO } from "../../../core/application/dtos/contact/ContactDTO";
 
 export interface LeadState {
-  leads: ClientDTO[];
+  leads: LeadDTO[];
   isLoading: boolean;
   error: string | null;
 }
@@ -21,8 +21,8 @@ const initialState: LeadState = {
   error: null,
 };
 
-const getLeadsRepository = container.getClientsUseCase;
-const saveLeadRepository = container.saveClientUseCase;
+const getLeadsRepository = container.getLeadsUseCase;
+const saveLeadRepository = container.saveLeadUseCase;
 
 export const getLeads = createAsyncThunk(
   "leads/getLeads",
@@ -48,7 +48,7 @@ const leadSlice = createSlice({
     });
     builder.addCase(
       getLeads.fulfilled,
-      (state, action: PayloadAction<ClientDTO[]>) => {
+      (state, action: PayloadAction<ContactDTO[]>) => {
         state.error = null;
         state.isLoading = false;
         state.leads = action.payload;
@@ -64,7 +64,7 @@ const leadSlice = createSlice({
     });
     builder.addCase(
       saveLead.fulfilled,
-      (state, action: PayloadAction<ClientDTO>) => {
+      (state, action: PayloadAction<ContactDTO>) => {
         state.error = null;
         state.isLoading = false;
         state.leads.push(action.payload);

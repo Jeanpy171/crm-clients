@@ -1,3 +1,4 @@
+import type { HistoryDTO } from "../../../core/application/dtos/contact/HistoryDTO";
 import type { LeadDTO } from "../../../core/application/dtos/leads/LeadDTO";
 import type {
   FilterLeadsParams,
@@ -5,9 +6,18 @@ import type {
 } from "../../../core/domain/repositories/ILeadRepository";
 
 import { LeadMapper } from "../../http/mappers/LeadMapper";
+import { contactActivity } from "../data/contactActivity";
 import { leadMocks } from "../data/leadMock";
 
 export class MockLeadRepository implements ILeadRepository {
+  async getHistoryById(id: string): Promise<HistoryDTO[]> {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const data = contactActivity.filter(
+      (activity) => activity.idContact === id
+    );
+    return data;
+  }
+
   async getAll({
     page,
     limit,
@@ -21,9 +31,6 @@ export class MockLeadRepository implements ILeadRepository {
         if (advisorId) {
           leads = leads.filter((lead) => lead.advisor === advisorId);
         }
-
-        console.warn("LEADS: ", leads);
-
         resolve(leads);
       }, 1500);
     });

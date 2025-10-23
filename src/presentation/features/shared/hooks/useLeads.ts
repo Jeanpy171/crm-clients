@@ -7,12 +7,20 @@ import type {
 import { getLeads } from "../../../../infrastructure/store/slices/leads";
 import { LeadMapper } from "../../../../infrastructure/http/mappers/LeadMapper";
 import { useAuth } from "./useAuth";
+import { ContactMapper } from "../../../../infrastructure/http/mappers/ContactMapper";
 
 export const useLeads = () => {
+  const { user } = useAuth();
   const { leads, isLoading, error } = useSelector(
     (state: RootState) => state.leads
   );
   const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (!leads.length && user?.id) {
+      handleGetLeads(user?.id ?? "");
+    }
+  }, [user, leads]);
 
   const handleGetLeads = (advisorId: string) => {
     dispatch(getLeads({ page: 1, limit: 20, advisorId: advisorId }));
@@ -36,7 +44,7 @@ export const useLeads = () => {
   // };
 
   const mappedLeads = useMemo(
-    () => (leads ? leads.map(LeadMapper.toDomain) : []),
+    () => (leads ? leads.map(ContactMapper.toDomain) : []),
     [leads]
   );
 

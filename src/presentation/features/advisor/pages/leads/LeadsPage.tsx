@@ -1,21 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Card, CardBody, Select, SelectItem } from "@heroui/react";
-import { Icon } from "@iconify/react";
-import type { Lead } from "../../../../../core/domain/entities/Lead";
-import { InteractionPhase } from "../../../../../core/domain/value-objects/contact";
+import { useState } from "react";
 import { InteractionPhaseDropdown } from "../../../shared/components/interaction-phase-dropdown/InteractionPhaseDropdown";
 import { InterestLevelDropdown } from "../../../shared/components/interest-level-dropdown/InterestLevelDropdown";
 import { ContactStatusDropdown } from "../../../shared/components/contact-status-dropdown/ContactStatusDropdown";
 import { useLeads } from "../../../shared/hooks/useLeads";
-import { useInteractionPhases } from "../../../shared/hooks/useInteractionPhases";
-import { useInterestLevels } from "../../../shared/hooks/useInterestLevels";
-import { ContactCard } from "../../../shared/components/contact-card/ContactCard";
 import { useAuth } from "../../../shared/hooks/useAuth";
 import { LeadsTable } from "./components/LeadsTable";
 import { ActivityHistoryModal } from "../../../shared/components/activity-history-modal/ActivityHistoryModal";
 import { ContactTracingModal } from "../../../shared/components/contact-tracing-modal/ContactTracingModal";
 import CreateTaskModal from "../../../shared/components/create-task-modal/CreateTaskModal";
 import { useTasks } from "../../../shared/hooks/useTasks";
+import type { Contact } from "../../../../../core/domain/entities/Contact";
 
 // interface AdvisorLeadsProps {
 //   leads: Lead[];
@@ -24,30 +18,30 @@ import { useTasks } from "../../../shared/hooks/useTasks";
 
 const LeadsPage = () => {
   const { user } = useAuth();
-  const { leads, handleGetLeads } = useLeads();
+  const { leads } = useLeads();
   const { isLoading, handleSaveTask } = useTasks();
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [selectedLead, setSelectedLead] = useState<Contact | null>(null);
   const [isOpenViewModal, setIsOpenViewModal] = useState(false);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false);
   const [isOpenCreateTask, setIsOpenCreateTask] = useState(false);
 
-  useEffect(() => {
-    if (!leads.length) {
-      handleGetLeads(user?.id ?? "");
-    }
-  }, [user, leads]);
+  // useEffect(() => {
+  //   if (!leads.length) {
+  //     handleGetLeads(user?.id ?? "");
+  //   }
+  // }, [user, leads]);
 
-  const handleOpenHistory = (lead: Lead) => {
+  const handleOpenHistory = (lead: Contact) => {
     setSelectedLead(lead);
     setIsOpenHistoryModal(true);
   };
 
-  const handleOpenView = (lead: Lead) => {
+  const handleOpenView = (lead: Contact) => {
     setSelectedLead(lead);
     setIsOpenViewModal(true);
   };
 
-  const handleTaskCreate = (lead: Lead) => {
+  const handleTaskCreate = (lead: Contact) => {
     setSelectedLead(lead);
     setIsOpenCreateTask(true);
   };
@@ -58,14 +52,19 @@ const LeadsPage = () => {
         size="4xl"
         // scrollBehavior="inside"
         isOpen={isOpenHistoryModal}
-        contact={selectedLead?.data ?? null}
+        contact={selectedLead ?? null}
         onClose={() => setIsOpenHistoryModal(!isOpenHistoryModal)}
       />
       <ContactTracingModal
         size="4xl"
         // scrollBehavior="inside"
         isOpen={isOpenViewModal}
-        contact={selectedLead?.data ?? null}
+        contact={selectedLead}
+        // contact={
+        //   selectedLead?.data
+        //     ? { id: selectedLead.id, ...selectedLead?.data }
+        //     : null
+        // }
         onClose={() => setIsOpenViewModal(!isOpenViewModal)}
       />
       <CreateTaskModal
@@ -79,8 +78,8 @@ const LeadsPage = () => {
             ? [
                 {
                   id: selectedLead.id,
-                  name: selectedLead.data.name,
-                  company: selectedLead.data.company,
+                  name: selectedLead.name,
+                  company: selectedLead.company,
                 },
               ]
             : []

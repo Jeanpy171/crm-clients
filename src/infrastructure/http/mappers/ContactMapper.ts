@@ -1,9 +1,9 @@
+import type { ContactDTO } from "../../../core/application/dtos/contact/ContactDTO";
 import type { LeadDTO } from "../../../core/application/dtos/leads/LeadDTO";
 import { Contact } from "../../../core/domain/entities/Contact";
-import { Lead } from "../../../core/domain/entities/Lead";
 
-export class LeadMapper {
-  static fromApiToDto(apiData: any): LeadDTO {
+export class ContactMapper {
+  static fromApiToDto(apiData: any): ContactDTO {
     return {
       id: apiData.id,
       name: apiData.name,
@@ -16,17 +16,16 @@ export class LeadMapper {
       createdAt: apiData.createdAt,
       lastActivity: apiData.lastActivity,
       followUpNotes: apiData.followUpNotes,
-      advisor: apiData.advisor,
       history: apiData.history,
+      advisor: apiData.advisor,
     };
   }
 
-  static toDomain(dto: LeadDTO): Lead {
-    console.warn("LEADS TODOMAIN: ", dto);
-    return Lead.create(Contact.create(dto));
+  static toDomain(dto: ContactDTO): Contact {
+    return Contact.create(dto);
   }
 
-  static toDto(lead: Lead): LeadDTO {
-    return lead.toJSON();
+  static toDto(contact: Contact): ContactDTO {
+    return contact.toJSON();
   }
 }

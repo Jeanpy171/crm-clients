@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
-import type { Client } from "../../../../../../core/domain/entities/Client";
 import GenericTable from "../../../../shared/components/generic-table/GenericTable";
 import { useInteractionPhases } from "../../../../shared/hooks/useInteractionPhases";
 import { useInterestLevels } from "../../../../shared/hooks/useInterestLevels";
 import { useContactStatus } from "../../../../shared/hooks/useContactStatus";
 import { Button, Chip } from "@heroui/react";
+import type { Contact } from "../../../../../../core/domain/entities/Contact";
 
 const columns = [
   { name: "CLIENTE", uid: "name" },
@@ -20,15 +20,15 @@ export const ClientsTable = ({
   data,
   onHistoryView,
 }: {
-  data: Client[];
-  onHistoryView: (arg0: Client) => void;
+  data: Contact[];
+  onHistoryView: (arg0: Contact) => void;
 }) => {
   const { getPhaseDescriptionByName } = useInteractionPhases();
   const { getInterestDescriptionByName } = useInterestLevels();
   const { getStatusDescriptionByName } = useContactStatus();
 
   const renderCell = useCallback(
-    (data: Client, columnKey: string) => {
+    (data: Contact, columnKey: string) => {
       const {
         name,
         email,
@@ -37,7 +37,7 @@ export const ClientsTable = ({
         status,
         company,
         lastActivity,
-      } = data.data;
+      } = data;
       switch (columnKey) {
         case "name":
           return (

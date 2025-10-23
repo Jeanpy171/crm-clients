@@ -1,4 +1,6 @@
 import type { ClientDTO } from "../../application/dtos/clients/ClientDTO";
+import type { ContactDTO } from "../../application/dtos/contact/ContactDTO";
+import type { IHistoryRepository } from "./IHistoryRepository";
 
 export interface FilterClientsParams {
   page: number;
@@ -6,11 +8,11 @@ export interface FilterClientsParams {
   advisorId: string;
 }
 
-export interface IClientRepository {
-  getAll(params: FilterClientsParams): Promise<ClientDTO[]>;
+export interface IClientRepository extends IHistoryRepository {
+  getAll(params: FilterClientsParams): Promise<ContactDTO[]>;
   // getAllByAdvisorId(id: string): Promise<ClientDTO[]>;
   getById(id: string): Promise<any | null>;
-  save(client: ClientDTO): Promise<ClientDTO>;
+  save(client: Omit<ClientDTO, "history">): Promise<ClientDTO>;
   delete(id: string): Promise<void>;
   patch(id: string, updates: Partial<ClientDTO>): Promise<void>;
 }

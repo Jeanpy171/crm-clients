@@ -32,7 +32,7 @@ export const getClients = createAsyncThunk(
 
 export const saveClient = createAsyncThunk(
   "clients/saveClient",
-  async (task: ClientDTO) => {
+  async (task: Omit<ClientDTO, "history">) => {
     return await saveClientRepository.execute(task);
   }
 );

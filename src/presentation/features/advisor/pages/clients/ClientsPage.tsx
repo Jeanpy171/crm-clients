@@ -16,67 +16,7 @@ import {
   InterestLevel,
 } from "../../../../../core/domain/value-objects/contact";
 import type { ClientDTO } from "../../../../../core/application/dtos/clients/ClientDTO";
-
-/*
-
-  const handleCreateClient = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleSaveClient = async (clientData: any) => {
-    console.log("Datos del cliente creado:", clientData);
-    console.log("User ID actual:", user?.id);
-
-    try {
-      // Map form data to ClientDTO
-      const clientDTO: ClientDTO = {
-        id: `client_${Date.now()}`, // Generate unique ID
-        name: clientData.name,
-        company: clientData.currentProvider || clientData.currentCompany || "Sin empresa",
-        email: clientData.email || "", // Default empty email
-        phone: clientData.phone,
-        interactionPhase: InteractionPhase.GRADE, // Default for clients
-        interestLevel: clientData.interestLevel || InterestLevel.INTEREST,
-        status: ContactStatus.PROSPECT, // Default status for clients
-        createdAt: new Date().toISOString(),
-        lastActivity: new Date().toISOString(),
-        followUpNotes: clientData.whatsMissing || "",
-        advisor: user?.id || "",
-      };
-
-      console.log("ClientDTO a guardar:", clientDTO);
-      
-      await saveClient(clientDTO);
-      console.log("Cliente guardado exitosamente, cerrando modal");
-      setIsModalOpen(false);
-
-      // Refresh clients list to ensure it's updated
-      console.log("Refrescando lista de clientes con advisor ID:", user?.id);
-      handleGetClients(user?.id ?? "");
-    } catch (error) {
-      console.error("Error al guardar el cliente:", error);
-    }
-  };
-
-  const onClientClick = (client: Client) => {};
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Mis Clientes</h2>
-        <Button
-          color="primary"
-          onPress={handleCreateClient}
-          startContent={<Icon icon="lucide:plus" />}
-        >
-          Nuevo cliente
-        </Button>
-      </div>
-*/
+import type { Contact } from "../../../../../core/domain/entities/Contact";
 
 const ClientsPage = () => {
   const {
@@ -85,17 +25,17 @@ const ClientsPage = () => {
     handleSaveClient: saveClient,
   } = useClients();
   const { user } = useAuth();
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedClient, setSelectedClient] = useState<Contact | null>(null);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false);
   const [isOpenCreateClient, setIsOpenCreateClient] = useState(false);
 
-  useEffect(() => {
-    if (!clients.length) {
-      handleGetClients(user?.id ?? "");
-    }
-  }, [user, clients]);
+  // useEffect(() => {
+  //   if (!clients.length) {
+  //     handleGetClients(user?.id ?? "");
+  //   }
+  // }, [user, clients]);
 
-  const handleOpenHistory = (client: Client) => {
+  const handleOpenHistory = (client: Contact) => {
     setSelectedClient(client);
     setIsOpenHistoryModal(true);
   };
@@ -106,7 +46,7 @@ const ClientsPage = () => {
 
     try {
       // Map form data to ClientDTO
-      const clientDTO: ClientDTO = {
+      const clientDTO: Omit<ClientDTO, "history"> = {
         id: `client_${Date.now()}`, // Generate unique ID
         name: clientData.name,
         company:
@@ -144,7 +84,7 @@ const ClientsPage = () => {
         size="4xl"
         // scrollBehavior="inside"
         isOpen={isOpenHistoryModal}
-        contact={selectedClient?.data ?? null}
+        contact={selectedClient ?? null}
         onClose={() => setIsOpenHistoryModal(!isOpenHistoryModal)}
       />
       <CreateClientModal

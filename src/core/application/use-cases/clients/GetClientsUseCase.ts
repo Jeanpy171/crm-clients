@@ -2,7 +2,7 @@ import type {
   FilterClientsParams,
   IClientRepository,
 } from "../../../domain/repositories/IClientRepository";
-import type { ClientDTO } from "../../dtos/clients/ClientDTO";
+import type { ContactDTO } from "../../dtos/contact/ContactDTO";
 
 export class GetClientsUseCase {
   private repository: IClientRepository;
@@ -11,7 +11,7 @@ export class GetClientsUseCase {
     this.repository = repository;
   }
 
-  async execute(params: FilterClientsParams): Promise<ClientDTO[]> {
+  async execute(params: FilterClientsParams): Promise<ContactDTO[]> {
     return await this.repository.getAll(params);
   }
 }

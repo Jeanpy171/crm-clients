@@ -16,6 +16,7 @@ export class ClientMapper {
       createdAt: apiData.createdAt,
       lastActivity: apiData.lastActivity,
       followUpNotes: apiData.followUpNotes,
+      history: apiData.history,
       advisor: apiData.advisor,
     };
   }

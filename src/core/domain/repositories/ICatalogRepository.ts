@@ -1,6 +1,6 @@
 import type { CatalogDTO } from "../../application/dtos/catalogs/CatalogDTO";
 
-export interface IContactRepository {
+export interface ICatalogRepository {
   getInteractionPhaseCatalog(): Promise<CatalogDTO[]>;
   getInterestLevelCatalog(): Promise<CatalogDTO[]>;
   getContactStatusCatalog(): Promise<CatalogDTO[]>;

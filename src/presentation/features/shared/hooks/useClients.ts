@@ -11,25 +11,28 @@ import {
 } from "../../../../infrastructure/store/slices/clients";
 import type { ClientDTO } from "../../../../core/application/dtos/clients/ClientDTO";
 import { ClientMapper } from "../../../../infrastructure/http/mappers/ClientMapper";
+import { useAuth } from "./useAuth";
+import { ContactMapper } from "../../../../infrastructure/http/mappers/ContactMapper";
 
 export const useClients = () => {
+  const { user } = useAuth();
   const { clients, isLoading, error } = useSelector(
     (state: RootState) => state.clients
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  // useEffect(() => {
-  //   if (!clients.length) {
-  //     handleGetClients();
-  //   }
-  // }, [clients]);
+  useEffect(() => {
+    if (!clients.length) {
+      handleGetClients(user?.id ?? "");
+    }
+  }, [user, clients]);
 
   const handleGetClients = (advisorId: string) => {
     console.log("handleGetClients llamado con advisorId:", advisorId);
     dispatch(getClients({ page: 1, limit: 20, advisorId }));
   };
 
-  const handleSaveClient = async (client: ClientDTO) => {
+  const handleSaveClient = async (client: Omit<ClientDTO, "history">) => {
     try {
       const resultAction = await dispatch(saveClient(client));
       console.log("Resultado del saveClient:", resultAction);
@@ -65,7 +68,7 @@ export const useClients = () => {
   };
 
   const mappedClients = useMemo(
-    () => (clients ? clients?.map(ClientMapper.toDomain) : []),
+    () => (clients ? clients?.map(ContactMapper.toDomain) : []),
     [clients]
   );
 

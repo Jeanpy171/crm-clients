@@ -1,4 +1,5 @@
 import type { LeadDTO } from "../../application/dtos/leads/LeadDTO";
+import type { IHistoryRepository } from "./IHistoryRepository";
 
 export interface FilterLeadsParams {
   page: number;
@@ -6,7 +7,7 @@ export interface FilterLeadsParams {
   advisorId: string;
 }
 
-export interface ILeadRepository {
+export interface ILeadRepository extends IHistoryRepository {
   // Define los métodos que el repositorio debe implementar
   getAll(params: FilterLeadsParams): Promise<LeadDTO[]>;
   // getAllByAdvisorId(id: string): Promise<LeadDTO[]>;

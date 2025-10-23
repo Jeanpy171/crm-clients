@@ -3,8 +3,10 @@ import type {
   InteractionPhase,
   InterestLevel,
 } from "../../../domain/value-objects/contact";
+import type { HistoryDTO } from "./HistoryDTO";
 
 export interface ContactDTO {
+  id: string;
   name: string;
   company: string;
   email: string;
@@ -15,5 +17,6 @@ export interface ContactDTO {
   createdAt: string;
   lastActivity: string;
   followUpNotes: string;
+  history: HistoryDTO[];
   advisor?: string;
 }

@@ -9,24 +9,25 @@ import { SignOutUseCase } from "../core/application/use-cases/users/SignOutUseCa
 import { MockTaskRepository } from "../infrastructure/mock/repositories/MockTaskRepository";
 // import { HttpUserRepository } from "../infrastructure/http/repositories/HttpUserRepository";
 import { MockUserRepository } from "../infrastructure/mock/repositories/MockUserRepository";
-import { MockContactRepository } from "../infrastructure/mock/repositories/MockContactRepository";
-import { GetContactStatusCatalogUseCase } from "../core/application/use-cases/contact/GetContactStatusCatalogUseCase";
-import { GetInteractionPhaseCatalogUseCase } from "../core/application/use-cases/contact/GetInteractionPhaseCatalogUseCase";
-import { GetInterestLevelCatalogUseCase } from "../core/application/use-cases/contact/GetInterestLevelCatalogUseCase";
-import { GetHousingSectorCatalogUseCase } from "../core/application/use-cases/contact/GetHousingSectorCatalogUseCase";
-import { GetInterestInNewServiceCatalogUseCase } from "../core/application/use-cases/contact/GetInterestInNewServiceCatalogUseCase";
-import { GetPreferredPlanCatalogUseCase } from "../core/application/use-cases/contact/GetPreferredPlanCatalogUseCase";
-import { GetAreasForImprovementCatalogUseCase } from "../core/application/use-cases/contact/GetAreasForImprovementCatalogUseCase";
-import { GetServiceSatisfactionCatalogUseCase } from "../core/application/use-cases/contact/GetServiceSatisfactionCatalogUseCase";
-import { GetServiceDurationCatalogUseCase } from "../core/application/use-cases/contact/GetServiceDurationCatalogUseCase";
-import { GetCurrentPlanCostCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentPlanCostCatalogUseCase";
-import { GetCurrentProviderCatalogUseCase } from "../core/application/use-cases/contact/GetCurrentProviderCatalogUseCase";
+import { MockCatalogRepository } from "../infrastructure/mock/repositories/MockCatalogRepository";
+import { GetContactStatusCatalogUseCase } from "../core/application/use-cases/catalog/GetContactStatusCatalogUseCase";
+import { GetInteractionPhaseCatalogUseCase } from "../core/application/use-cases/catalog/GetInteractionPhaseCatalogUseCase";
+import { GetInterestLevelCatalogUseCase } from "../core/application/use-cases/catalog/GetInterestLevelCatalogUseCase";
+import { GetHousingSectorCatalogUseCase } from "../core/application/use-cases/catalog/GetHousingSectorCatalogUseCase";
+import { GetInterestInNewServiceCatalogUseCase } from "../core/application/use-cases/catalog/GetInterestInNewServiceCatalogUseCase";
+import { GetPreferredPlanCatalogUseCase } from "../core/application/use-cases/catalog/GetPreferredPlanCatalogUseCase";
+import { GetAreasForImprovementCatalogUseCase } from "../core/application/use-cases/catalog/GetAreasForImprovementCatalogUseCase";
+import { GetServiceSatisfactionCatalogUseCase } from "../core/application/use-cases/catalog/GetServiceSatisfactionCatalogUseCase";
+import { GetServiceDurationCatalogUseCase } from "../core/application/use-cases/catalog/GetServiceDurationCatalogUseCase";
+import { GetCurrentPlanCostCatalogUseCase } from "../core/application/use-cases/catalog/GetCurrentPlanCostCatalogUseCase";
+import { GetCurrentProviderCatalogUseCase } from "../core/application/use-cases/catalog/GetCurrentProviderCatalogUseCase";
 import { GetLeadsUseCase } from "../core/application/use-cases/leads/GetLeadsUseCase";
 import { MockLeadRepository } from "../infrastructure/mock/repositories/MockLeadRepository";
 import { MockClientRepository } from "../infrastructure/mock/repositories/MockClientRepository";
 import { GetClientsUseCase } from "../core/application/use-cases/clients/GetClientsUseCase";
 import { SaveClientUseCase } from "../core/application/use-cases/clients/SaveClientUseCase";
 import { SaveLeadUseCase } from "../core/application/use-cases/leads/SaveLeadUseCase";
+import { GetHistoryUseCase } from "../core/application/use-cases/history/GetHistoryUseCase";
 
 class DIContainer {
   // ============ MOCK REPOSITORIES ============
@@ -34,7 +35,7 @@ class DIContainer {
   private leadRepository = new MockLeadRepository();
   private taskRepository = new MockTaskRepository();
   private userRepository = new MockUserRepository();
-  private contactStatusRepository = new MockContactRepository();
+  private contactStatusRepository = new MockCatalogRepository();
   // ============ HTTP REPOSITORIES ============
   // private leadRepository = new HttpLeadRepository();
   // private clientRepository = new HttpClientRepository();
@@ -45,7 +46,7 @@ class DIContainer {
   signInUseCase = new SignInUseCase(this.userRepository);
   signOutUseCase = new SignOutUseCase(this.userRepository);
 
-  // ============ USE CASES - CONTACT ============
+  // ============ USE CASES - CATALOGS ============
   getContactStatusUseCase = new GetContactStatusCatalogUseCase(
     this.contactStatusRepository
   );
@@ -80,6 +81,8 @@ class DIContainer {
     this.contactStatusRepository
   );
 
+  // ============ USE CASES - HISTORY ============
+  getHistoryUseCase = new GetHistoryUseCase(this.clientRepository);
   // ============ USE CASES - Clients ============
   getClientsUseCase = new GetClientsUseCase(this.clientRepository);
   saveClientUseCase = new SaveClientUseCase(this.clientRepository);

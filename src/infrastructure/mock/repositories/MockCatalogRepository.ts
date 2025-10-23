@@ -1,5 +1,5 @@
 import type { CatalogDTO } from "../../../core/application/dtos/catalogs/CatalogDTO";
-import type { IContactRepository } from "../../../core/domain/repositories/IContactRepository";
+import type { ICatalogRepository } from "../../../core/domain/repositories/ICatalogRepository";
 import { CatalogMapper } from "../../http/mappers/CatalogMapper";
 import {
   contactStatusMocks,
@@ -15,7 +15,7 @@ import {
   currentProviderMocks,
 } from "../data/contactMock";
 
-export class MockContactRepository implements IContactRepository {
+export class MockCatalogRepository implements ICatalogRepository {
   async getInteractionPhaseCatalog(): Promise<CatalogDTO[]> {
     return new Promise((resolve) => {
       setTimeout(() => {

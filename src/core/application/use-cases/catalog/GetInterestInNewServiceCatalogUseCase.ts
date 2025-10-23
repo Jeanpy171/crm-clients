@@ -1,9 +1,9 @@
-import type { IContactRepository } from "../../../domain/repositories/IContactRepository";
+import type { ICatalogRepository } from "../../../domain/repositories/ICatalogRepository";
 
 export class GetInterestInNewServiceCatalogUseCase {
-  private repository: IContactRepository;
+  private repository: ICatalogRepository;
 
-  constructor(repository: IContactRepository) {
+  constructor(repository: ICatalogRepository) {
     this.repository = repository;
   }
 

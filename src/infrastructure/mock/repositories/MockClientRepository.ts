@@ -1,23 +1,36 @@
 import type { ClientDTO } from "../../../core/application/dtos/clients/ClientDTO";
+import type { ContactDTO } from "../../../core/application/dtos/contact/ContactDTO";
+import type { HistoryDTO } from "../../../core/application/dtos/contact/HistoryDTO";
 import type {
   FilterClientsParams,
   IClientRepository,
 } from "../../../core/domain/repositories/IClientRepository";
 import { ClientMapper } from "../../http/mappers/ClientMapper";
+import { ContactMapper } from "../../http/mappers/ContactMapper";
 import { clientMocks } from "../data/clientMock";
+import { contactActivity } from "../data/contactActivity";
 
 export class MockClientRepository implements IClientRepository {
-  private clients: ClientDTO[] = [];
+  private clients: ContactDTO[] = [];
 
   constructor() {
     // Initialize with mock data
-    this.clients = clientMocks.map(ClientMapper.fromApiToDto);
+    this.clients = clientMocks.map(ContactMapper.fromApiToDto);
   }
+
+  async getHistoryById(id: string): Promise<HistoryDTO[]> {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const data = contactActivity.filter(
+      (activity) => activity.idContact === id
+    );
+    return data;
+  }
+
   async getAll({
     page,
     limit,
     advisorId,
-  }: FilterClientsParams): Promise<ClientDTO[]> {
+  }: FilterClientsParams): Promise<ContactDTO[]> {
     console.warn("ADVISOR ID: ", advisorId);
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -62,21 +75,22 @@ export class MockClientRepository implements IClientRepository {
     });
   }
 
-  async save(client: ClientDTO): Promise<ClientDTO> {
+  async save(client: ContactDTO): Promise<ClientDTO> {
     return new Promise((resolve) => {
       setTimeout(() => {
         // Generate a unique ID if not provided
-        const clientWithId = {
-          ...client,
-          id: client.id || `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        };
-        
+        // const clientWithId = {
+        //   ...client,
+        //   id:
+        //     client.id ||
+        //     `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        // };
+
         // Add the new client to the persistent array
-        this.clients.push(clientWithId);
-        
-        console.log("Cliente guardado en mock repository:", clientWithId);
+        this.clients.push(client);
+
         console.log("Total de clientes en repositorio:", this.clients.length);
-        resolve(clientWithId);
+        resolve(client);
       }, 1500);
     });
   }

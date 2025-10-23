@@ -1,12 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback } from "react";
 import type { Client } from "../../../../../../core/domain/entities/Client";
 import GenericTable from "../../../../shared/components/generic-table/GenericTable";
 import { useInteractionPhases } from "../../../../shared/hooks/useInteractionPhases";
 import { useInterestLevels } from "../../../../shared/hooks/useInterestLevels";
 import { useContactStatus } from "../../../../shared/hooks/useContactStatus";
 import { Button, Chip } from "@heroui/react";
-import type { Task } from "../../../../../../core/domain/entities/Task";
-import type { Lead } from "../../../../../../core/domain/entities/Lead";
+import type { Contact } from "../../../../../../core/domain/entities/Contact";
 
 const columns = [
   { name: "CLIENTE", uid: "name" },
@@ -24,17 +23,17 @@ export const LeadsTable = ({
   onHistoryView,
   onTaskCreate,
 }: {
-  data: Client[];
-  onDataView: (arg0: Lead) => void;
-  onHistoryView: (arg0: Lead) => void;
-  onTaskCreate: (arg0: Lead) => void;
+  data: Contact[];
+  onDataView: (arg0: Contact) => void;
+  onHistoryView: (arg0: Contact) => void;
+  onTaskCreate: (arg0: Contact) => void;
 }) => {
   const { getPhaseDescriptionByName } = useInteractionPhases();
   const { getInterestDescriptionByName } = useInterestLevels();
   const { getStatusDescriptionByName } = useContactStatus();
 
   const renderCell = useCallback(
-    (data: Lead, columnKey: string) => {
+    (data: Contact, columnKey: string) => {
       const {
         name,
         email,
@@ -43,7 +42,7 @@ export const LeadsTable = ({
         status,
         company,
         lastActivity,
-      } = data.data;
+      } = data;
       switch (columnKey) {
         case "name":
           return (
