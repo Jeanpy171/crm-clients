@@ -1,131 +1,87 @@
-import React from "react";
-import {
-  Card,
-  CardBody,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-  Chip,
-} from "@heroui/react";
-import { Icon } from "@iconify/react";
-import type { Lead } from "../../../../../../core/domain/entities/Lead";
-import {
-  InteractionPhase,
-  InterestLevel,
-} from "../../../../../../core/domain/value-objects/contact";
+import { useState } from "react";
+import type { Contact } from "../../../../../../core/domain/entities/Contact";
+import { Button, Card, CardBody, CardHeader, Divider } from "@heroui/react";
+import { InteractionPhase } from "../../../../../../core/domain/value-objects/contact";
 
 interface KanbanCardProps {
-  lead: Lead;
-  onClick: () => void;
-  onMove: (leadId: string, newState: string) => void;
-  currentState: string;
+  contact: Contact;
+  onDragStart?: (columnId: string, cardId: string) => void;
+  onDragEnd?: () => void;
+  onViewContactData: (arg0: Contact | null) => void;
+  columnId?: string;
 }
 
-const KanbanCard: React.FC<KanbanCardProps> = ({
-  lead,
-  onClick,
-  onMove,
-  currentState,
-}) => {
-  const getInterestColor = () => {
-    switch (lead.data.interestLevel) {
-      case InterestLevel.NOT_VERY_INTERESTED:
-        return "warning";
-      case InterestLevel.VERY_INTERESTED:
-        return "success";
-      case InterestLevel.INTEREST:
-        return "primary";
-      default:
-        return "default";
-    }
+export const KanbanCard = ({
+  contact,
+  onDragStart,
+  onDragEnd,
+  onViewContactData,
+  columnId,
+}: KanbanCardProps) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const { id, name, company, interestLevel, lastActivity, interactionPhase } =
+    contact || {};
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("text/plain", id);
+    setIsDragging(true);
+    onDragStart?.(columnId!, id);
   };
 
-  // const states = ["Calificar", "Desarrollar", "Proponer", "Cierre"];
-  // const availableStates = states?.filter((state) => state !== currentState);
-
-  const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData("text/plain", lead.id);
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    onDragEnd?.();
   };
+
+  const Description = ({ field, value }: { field: string; value: string }) => (
+    <div key={field} className="flex gap-1 items-start text-sm text-gray-700">
+      <h5 className="font-semibold text-zinc-500">{field}:</h5>
+      {value}
+    </div>
+  );
 
   return (
     <Card
-      isPressable
-      onPress={onClick}
-      draggable={true}
+      draggable
       onDragStart={handleDragStart}
-      className="border border-gray-200 hover:border-primary-300 transition-colors cursor-move"
-      shadow="none"
+      onDragEnd={handleDragEnd}
+      className={`p-3 bg-white rounded-xl shadow cursor-grab active:cursor-grabbing transition-all ease-in-out transform w-full border-l-blue-800 border-l-4 hover:scale-105 hover:rotate-3 ${
+        isDragging ? "opacity-50 scale-105" : "opacity-100"
+      }`}
     >
-      <CardBody className="p-3">
-        <div className="flex justify-between items-start">
-          <h4 className="font-medium text-gray-800">{lead.data.name}</h4>
-          <Dropdown>
-            <DropdownTrigger>
-              <Button
-                isIconOnly
-                size="sm"
-                variant="light"
-                onPress={(e: any) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Icon icon="lucide:more-vertical" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Acciones de lead">
-              <DropdownItem
-                key="details"
-                startContent={<Icon icon="lucide:info" />}
-                onPress={(e: any) => {
-                  e.stopPropagation();
-                  onClick();
-                }}
-              >
-                Ver detalles
-              </DropdownItem>
-              <DropdownItem
-                key="edit"
-                startContent={<Icon icon="lucide:edit" />}
-              >
-                Editar
-              </DropdownItem>
-              {
-                Object.values(InteractionPhase).map((phase) => (
-                  <DropdownItem
-                    key={`move-to-${phase}`}
-                    startContent={<Icon icon="lucide:move-right" />}
-                    onPress={(e: any) => {
-                      e.stopPropagation();
-                      onMove(lead.id, phase);
-                    }}
-                  >
-                    Mover a {phase}
-                  </DropdownItem>
-                )) as any
-              }
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-
-        <div className="mt-2 flex items-center gap-2">
-          <Icon icon="lucide:phone" className="text-gray-400 text-sm" />
-          <span className="text-sm text-gray-600">{lead.data.phone}</span>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between">
-          <Chip size="sm" color={getInterestColor()} variant="flat">
-            {lead.data.interestLevel}
-          </Chip>
-
-          <span className="text-xs text-gray-500">
-            {new Date(lead.data.lastActivity).toLocaleDateString()}
-          </span>
+      <CardHeader>
+        <strong>{name}</strong>
+      </CardHeader>
+      <Divider />
+      <CardBody className="flex flex-col gap-2">
+        <Description field="Empresa" value={company} />
+        <Description field="Interés" value={interestLevel} />
+        <Description
+          field="Última Actividad"
+          value={lastActivity.toDateString()}
+        />
+        <div className="flex flex-wrap gap-2 mt-2 w-full justify-start">
+          <Button
+            size="sm"
+            color="primary"
+            variant="flat"
+            onPress={() => onViewContactData(contact)}
+          >
+            Ver
+          </Button>
+          {interactionPhase !== InteractionPhase.CLOSING && (
+            <Button size="sm" color="success" variant="flat">
+              Avanzar
+            </Button>
+          )}
+          <Button size="sm" color="warning" variant="flat">
+            Calificar
+          </Button>
+          <Button size="sm" color="danger" variant="flat">
+            Eliminar
+          </Button>
         </div>
       </CardBody>
     </Card>
   );
 };
-
-export default KanbanCard;

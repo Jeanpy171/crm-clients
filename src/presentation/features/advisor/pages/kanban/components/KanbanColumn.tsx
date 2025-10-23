@@ -1,73 +1,110 @@
-import React from "react";
-import { Card, CardBody, Badge } from "@heroui/react";
-import KanbanCard from "./KanBanCard";
-import type { Lead } from "../../../../../../core/domain/entities/Lead";
+import React, { useState, useRef } from "react";
+import type { ColumnType } from "./KanbanBoard";
+import { Badge, Divider } from "@heroui/react";
+import type { Contact } from "../../../../../../core/domain/entities/Contact";
+import { KanbanCard } from "./KanBanCard";
 
-interface KanbanColumnProps {
-  title: string;
-  leads: Lead[];
-  count: number;
-  state: string;
-  onLeadClick: (lead: Lead) => void;
-  onLeadMove: (leadId: string, newState: string) => void;
+interface ColumnProps {
+  column: ColumnType;
+  onDrop: (taskId: string, targetColumnId: string) => void;
+  onViewContactData: (arg0: Contact | null) => void;
+  dragState?: {
+    originColumnId: string | null;
+    isDragging: boolean;
+    onDragStart: (columnId: string) => void;
+    onDragEnd?: () => void;
+  };
 }
 
-const KanbanColumn: React.FC<KanbanColumnProps> = ({
-  title,
-  leads,
-  count,
-  state,
-  onLeadClick,
-  onLeadMove,
-}) => {
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
+export const KanbanColumn = ({
+  column,
+  onDrop,
+  dragState,
+  onViewContactData,
+}: ColumnProps) => {
+  const [isOver, setIsOver] = useState(false);
+  const dragCounter = useRef(0);
 
-  const handleDrop = (e: React.DragEvent) => {
+  const originColumnId = dragState?.originColumnId ?? null;
+  const isDragging = dragState?.isDragging ?? false;
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const leadId = e.dataTransfer.getData("text/plain");
-    if (leadId) {
-      onLeadMove(leadId, state);
+    e.stopPropagation();
+
+    // Solo aplica si no es la columna de origen
+    if (column.id !== originColumnId) {
+      dragCounter.current += 1;
+      setIsOver(true);
     }
   };
 
-  return (
-    <Card className="h-full">
-      <CardBody className="p-0 flex flex-col">
-        <div className="p-3 border-b border-gray-200 flex justify-between items-center">
-          <h3 className="font-semibold text-gray-700">{title}</h3>
-          <Badge color="primary" variant="flat" size="sm">
-            {count}
-          </Badge>
-        </div>
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
-        <div
-          className="p-2 flex-grow overflow-y-auto kanban-column"
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          {leads?.length > 0 ? (
-            <div className="space-y-2">
-              {leads.map((lead) => (
-                <KanbanCard
-                  key={lead.id}
-                  lead={lead}
-                  onClick={() => onLeadClick(lead)}
-                  onMove={onLeadMove}
-                  currentState={state}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-400 text-sm">
-              No hay clientes en esta columna
-            </div>
-          )}
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    dragCounter.current -= 1;
+    if (dragCounter.current === 0) {
+      setIsOver(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const taskId = e.dataTransfer.getData("text/plain");
+    dragCounter.current = 0;
+    setIsOver(false);
+    onDrop(taskId, column.id);
+  };
+
+  // 🔹 Estilos visuales
+  let borderClass = "border-gray-200";
+  let bgClass = "";
+
+  if (isDragging && column.id !== originColumnId) {
+    borderClass = "border-blue-300 border-dashed";
+  }
+
+  if (isOver && column.id !== originColumnId) {
+    borderClass = "border-blue-500";
+    bgClass = "bg-blue-50";
+  }
+
+  return (
+    <div
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={`flex flex-col w-80 gap-3 p-4 rounded-2xl min-h-[300px] border-2 transition-all duration-200 ease-in-out ${borderClass} ${bgClass}`}
+    >
+      <div className="flex justify-between">
+        <h2 className="font-semibold text-gray-700">{column.title}</h2>
+        <div className="bg-blue-800 text-white font-bold rounded-full w-6 h-6 flex justify-center items-center">
+          <h5>{column?.contacts?.length || 0}</h5>
         </div>
-      </CardBody>
-    </Card>
+      </div>
+
+      <Divider />
+      <div className="flex flex-col gap-2">
+        {column.contacts.map((contact) => (
+          <KanbanCard
+            key={contact.id}
+            contact={contact}
+            columnId={column.id}
+            onViewContactData={onViewContactData}
+            onDragStart={dragState?.onDragStart}
+            onDragEnd={dragState?.onDragEnd}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
-
-export default KanbanColumn;

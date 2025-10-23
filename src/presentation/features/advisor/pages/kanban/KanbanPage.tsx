@@ -1,10 +1,6 @@
 import React from "react";
-
-import KanbanBoard from "./components/KanbanBoard";
-import type { Lead } from "../../../../../core/domain/entities/Lead";
 import type { Contact } from "../../../../../core/domain/entities/Contact";
-import KanbanColumn from "./components/KanbanColumn";
-import { Board } from "./components/Board";
+import { KanbanBoard } from "./components/KanbanBoard";
 
 interface AdvisorKanbanProps {
   onContactClick: (contact: { id: string; data: Contact }) => void;
@@ -20,7 +16,7 @@ const KanbanPage: React.FC<AdvisorKanbanProps> = () => {
         <h2 className="text-xl font-bold">Tablero Kanban - Seguimiento</h2>
       </div>
 
-      <Board />
+      <KanbanBoard />
 
       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KanbanColumn

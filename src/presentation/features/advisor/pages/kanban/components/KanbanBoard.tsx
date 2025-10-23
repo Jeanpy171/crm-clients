@@ -1,85 +1,174 @@
-import React from "react";
-import { Button } from "@heroui/react";
-import { Icon } from "@iconify/react";
-import KanbanColumn from "./KanbanColumn";
-import type { Lead } from "../../../../../../core/domain/entities/Lead";
+import { useEffect, useState } from "react";
+import type { Contact } from "../../../../../../core/domain/entities/Contact";
+import { KanbanColumn } from "./KanbanColumn";
+import { useLeads } from "../../../../shared/hooks/useLeads";
+import { useClients } from "../../../../shared/hooks/useClients";
 import { InteractionPhase } from "../../../../../../core/domain/value-objects/contact";
+import { addToast } from "@heroui/react";
+import { ContactTracingModal } from "../../../../shared/components/contact-tracing-modal/ContactTracingModal";
 
-interface KanbanBoardProps {
-  leads: Lead[];
-  onLeadClick: (lead: Lead) => void;
-  onCreateLead: () => void;
-  onLeadMove: (leadId: string, newState: string) => void;
+export interface ColumnType {
+  id: string;
+  title: string;
+  //   phase: InteractionPhase;
+  contacts: Contact[];
 }
 
-const KanbanBoard: React.FC<KanbanBoardProps> = ({
-  leads,
-  onLeadClick,
-  onCreateLead,
-  onLeadMove,
-}) => {
-  console.log("KanbanBoard rendering with leads:", leads);
-  // Group leads by state
-  const leadsByState = {
-    Calificar: leads?.filter(
-      (lead) => lead.data.interactionPhase === InteractionPhase.GRADE
-    ),
-    Desarrollar: leads?.filter(
-      (lead) => lead.data.interactionPhase === InteractionPhase.DEVELOP
-    ),
-    Proponer: leads?.filter(
-      (lead) => lead.data.interactionPhase === InteractionPhase.PROPOSE
-    ),
-    Cierre: leads?.filter(
-      (lead) => lead.data.interactionPhase === InteractionPhase.CLOSING
-    ),
+export const KanbanBoard = () => {
+  const [columns, setColumns] = useState<ColumnType[]>([]);
+  const { leads } = useLeads();
+  const { clients } = useClients();
+  const [dragState, setDragState] = useState<{
+    originColumnId: string | null;
+    isDragging: boolean;
+  }>({ originColumnId: null, isDragging: false });
+  const [isShowContactData, setIsShowContactData] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+
+  const handleDragStart = (columnId: string) => {
+    setDragState({ originColumnId: columnId, isDragging: true });
+  };
+
+  const handleDragEnd = () => {
+    setDragState({ originColumnId: null, isDragging: false });
+  };
+
+  // useEffect(() => {
+  //   if (!clients.length) {
+  //     handleGetClients(user?.id ?? "");
+  //   }
+  // }, [user, clients]);
+
+  // useEffect(() => {
+  //   if (!leads.length) {
+  //     handleGetLeads(user?.id ?? "");
+  //   }
+  // }, [user, leads]);
+
+  useEffect(() => {
+    handleSortByColumn();
+  }, [leads, clients]);
+
+  const handleDrop = (id: string, targetColumnId: string) => {
+    let movingContact: Contact | null = null;
+    let columnName: string | null = null;
+
+    setColumns((prev) => {
+      const sourceCol = prev.find((col) =>
+        col.contacts.some((c) => c.id === id)
+      );
+      if (!sourceCol) return prev;
+
+      movingContact = sourceCol.contacts.find((c) => c.id === id)!;
+
+      const withoutSource = prev.map((col) =>
+        col.id === sourceCol.id
+          ? { ...col, contacts: col.contacts.filter((c) => c.id !== id) }
+          : col
+      );
+
+      const updated = withoutSource.map((col) => {
+        if (col.id === targetColumnId && movingContact) {
+          columnName = col.title;
+          return { ...col, contacts: [...col.contacts, movingContact] };
+        }
+        return col;
+      });
+
+      return updated;
+    });
+
+    if (movingContact) {
+      addToast({
+        title: `Contacto movido a etapa ${columnName}`,
+        description: `El cliente ${movingContact.name} se ha desplazado correctamente`,
+        color: "success",
+        timeout: 2500,
+      });
+    }
+
+    handleDragEnd();
+  };
+
+  const handleSortByColumn = () => {
+    const mixedContacts = [...clients, ...leads];
+    // const formattedContacts = mixedContacts.map((contact) => ({
+    //   id: contact.id,
+    //   ...contact.data,
+    // }));
+
+    const filterByGrades =
+      mixedContacts.filter(
+        (contact) => contact.interactionPhase === InteractionPhase.GRADE
+      ) || [];
+
+    const filterByDevelop =
+      mixedContacts.filter(
+        (contact) => contact.interactionPhase === InteractionPhase.DEVELOP
+      ) || [];
+
+    const filterByPropose =
+      mixedContacts.filter(
+        (contact) => contact.interactionPhase === InteractionPhase.PROPOSE
+      ) || [];
+
+    const filterByClosing =
+      mixedContacts.filter(
+        (contact) => contact.interactionPhase === InteractionPhase.CLOSING
+      ) || [];
+
+    const dataByColums: ColumnType[] = [
+      {
+        id: InteractionPhase.GRADE,
+        title: "Calificar",
+        contacts: filterByGrades,
+      },
+      {
+        id: InteractionPhase.DEVELOP,
+        title: "Desarrollar",
+        contacts: filterByDevelop,
+      },
+      {
+        id: InteractionPhase.PROPOSE,
+        title: "Proponer",
+        contacts: filterByPropose,
+      },
+      {
+        id: InteractionPhase.CLOSING,
+        title: "Cerrar",
+        contacts: filterByClosing,
+      },
+    ];
+
+    setColumns(dataByColums);
+  };
+
+  const handleViewContactData = (contact: Contact | null) => {
+    setSelectedContact(contact);
+    setIsShowContactData(true);
   };
 
   return (
-    <div className="mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Tablero Kanban - Mis clientes</h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="flex gap-4 min-h-screen justify-between items-start">
+      <ContactTracingModal
+        size="4xl"
+        contact={selectedContact}
+        isOpen={isShowContactData}
+        onClose={() => setIsShowContactData(false)}
+      />
+      {columns.map((col) => (
         <KanbanColumn
-          title="Calificar"
-          leads={leadsByState.Calificar}
-          count={leadsByState.Calificar?.length}
-          onLeadClick={onLeadClick}
-          onLeadMove={onLeadMove}
-          state="Calificar"
+          key={col.id}
+          column={col}
+          onDrop={handleDrop}
+          dragState={{
+            ...dragState,
+            onDragStart: handleDragStart,
+            onDragEnd: handleDragEnd,
+          }}
+          onViewContactData={handleViewContactData}
         />
-
-        <KanbanColumn
-          title="Desarrollar"
-          leads={leadsByState.Desarrollar}
-          count={leadsByState.Desarrollar?.length}
-          onLeadClick={onLeadClick}
-          onLeadMove={onLeadMove}
-          state="Desarrollar"
-        />
-
-        <KanbanColumn
-          title="Proponer"
-          leads={leadsByState.Proponer}
-          count={leadsByState.Proponer?.length}
-          onLeadClick={onLeadClick}
-          onLeadMove={onLeadMove}
-          state="Proponer"
-        />
-
-        <KanbanColumn
-          title="Cierre"
-          leads={leadsByState.Cierre}
-          count={leadsByState.Cierre?.length}
-          onLeadClick={onLeadClick}
-          onLeadMove={onLeadMove}
-          state="Cierre"
-        />
-      </div>
+      ))}
     </div>
   );
 };
-
-export default KanbanBoard;
