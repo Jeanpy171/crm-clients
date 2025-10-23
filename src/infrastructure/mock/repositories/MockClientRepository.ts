@@ -15,7 +15,14 @@ export class MockClientRepository implements IClientRepository {
 
   constructor() {
     // Initialize with mock data
-    this.clients = clientMocks.map(ContactMapper.fromApiToDto);
+    const data = clientMocks.map((client) => ({ ...client, type: "CLIENT" }));
+    this.clients = data.map(ContactMapper.fromApiToDto);
+  }
+
+  async saveHistory(history: HistoryDTO): Promise<HistoryDTO> {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    contactActivity.push(history);
+    return history;
   }
 
   async getHistoryById(id: string): Promise<HistoryDTO[]> {
@@ -65,7 +72,7 @@ export class MockClientRepository implements IClientRepository {
   async getById(id: string): Promise<ClientDTO | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const response = clientMocks.find((client) => client.id === id);
+        const response = this.clients.find((client) => client.id === id);
         if (!response) throw new Error("Cliente no encontrado");
 
         const client = response;

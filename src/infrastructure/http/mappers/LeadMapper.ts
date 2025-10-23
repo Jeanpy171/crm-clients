@@ -10,6 +10,7 @@ export class LeadMapper {
       company: apiData.company,
       email: apiData.email,
       phone: apiData.phone,
+      type: apiData.type,
       interactionPhase: apiData.interactionPhase,
       interestLevel: apiData.interestLevel,
       status: apiData.status,

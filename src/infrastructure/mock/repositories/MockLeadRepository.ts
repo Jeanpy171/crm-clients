@@ -1,15 +1,31 @@
+import type { ContactDTO } from "../../../core/application/dtos/contact/ContactDTO";
 import type { HistoryDTO } from "../../../core/application/dtos/contact/HistoryDTO";
 import type { LeadDTO } from "../../../core/application/dtos/leads/LeadDTO";
 import type {
   FilterLeadsParams,
   ILeadRepository,
 } from "../../../core/domain/repositories/ILeadRepository";
+import { ContactMapper } from "../../http/mappers/ContactMapper";
 
 import { LeadMapper } from "../../http/mappers/LeadMapper";
 import { contactActivity } from "../data/contactActivity";
 import { leadMocks } from "../data/leadMock";
 
 export class MockLeadRepository implements ILeadRepository {
+  private leads: ContactDTO[] = [];
+
+  constructor() {
+    // Initialize with mock data
+    const data = leadMocks.map((lead) => ({ ...lead, type: "LEAD" }));
+    this.leads = data.map(ContactMapper.fromApiToDto);
+  }
+
+  async saveHistory(history: HistoryDTO): Promise<HistoryDTO> {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    contactActivity.push(history);
+    return history;
+  }
+
   async getHistoryById(id: string): Promise<HistoryDTO[]> {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     const data = contactActivity.filter(
@@ -25,8 +41,7 @@ export class MockLeadRepository implements ILeadRepository {
   }: FilterLeadsParams): Promise<LeadDTO[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const data = leadMocks as any[];
-        let leads = data.map(LeadMapper.fromApiToDto);
+        let leads = this.leads.map(LeadMapper.fromApiToDto);
 
         if (advisorId) {
           leads = leads.filter((lead) => lead.advisor === advisorId);
@@ -50,7 +65,7 @@ export class MockLeadRepository implements ILeadRepository {
   async getById(id: string): Promise<LeadDTO | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const response = leadMocks.find((lead) => lead.id === id);
+        const response = this.leads.find((lead) => lead.id === id);
         if (!response) throw new Error("Lead no encontrado");
 
         const lead = response;

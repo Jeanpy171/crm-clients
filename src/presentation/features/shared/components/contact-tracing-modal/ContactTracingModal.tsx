@@ -18,6 +18,7 @@ import { mapValueToChipColor } from "../../helpers/chipHelper";
 import { useContactHistory } from "../../hooks/useContactHistory";
 import { useEffect } from "react";
 import type { HistoryDTO } from "../../../../../core/application/dtos/contact/HistoryDTO";
+import { ActivityHistory } from "./components/ActivityHistory";
 
 interface ContactTracingModalProps extends Omit<ModalProps, "children"> {
   contact: Contact | null;
@@ -81,61 +82,6 @@ const DescriptionCard = ({
     </CardBody>
   </Card>
 );
-
-const ActivityHistory = ({
-  idContact,
-  history,
-  onSetHistory,
-}: {
-  idContact: string | null;
-  history: HistoryDTO[];
-  onSetHistory: (arg0: HistoryDTO[]) => void;
-}) => {
-  const {
-    history: updatedHistory,
-    isLoading,
-    error,
-  } = useContactHistory(idContact, history);
-
-  useEffect(() => {
-    if (updatedHistory.length && updatedHistory !== history) {
-      onSetHistory(updatedHistory);
-    }
-  }, [updatedHistory, history, onSetHistory]);
-
-  return (
-    <Card className="w-full">
-      <CardHeader className="font-bold">Historial de Actividades</CardHeader>
-      <Divider />
-      <CardBody>
-        {error && <p className="text-red-500">{error}</p>}
-        {isLoading ? (
-          <p>Cargando...</p>
-        ) : updatedHistory.length ? (
-          <ul>
-            {updatedHistory.map((h) => (
-              <li key={h.id}>
-                {h.createdAt.toDateString()}: {h.pastInteractionPhase}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Aún no hay historial de actividades registrado.</p>
-        )}
-      </CardBody>
-      <Divider />
-      <CardFooter className="flex flex-col gap-2">
-        <div className="w-full flex justify-between items-center">
-          <p>Análisis de IA</p>
-          <Button>Analizar</Button>
-        </div>
-        <em>
-          Haz click en "Analizar" para obtener insights de IA sobre este lead.
-        </em>
-      </CardFooter>
-    </Card>
-  );
-};
 
 export const GeneralInformationCard = ({
   contact,
@@ -211,7 +157,7 @@ export const ContactTracingModal = ({
   const { name, company, interactionPhase, id } = contact || {};
 
   const handleSetHistory = (history: HistoryDTO[]) => {
-    contact?.setHisyoty(history);
+    contact?.setHistory(history);
   };
 
   return (

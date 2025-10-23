@@ -1,25 +1,29 @@
 import React, { useState, useRef } from "react";
 import type { ColumnType } from "./KanbanBoard";
-import { Badge, Divider } from "@heroui/react";
 import type { Contact } from "../../../../../../core/domain/entities/Contact";
-import { KanbanCard } from "./KanBanCard";
+import { Divider } from "@heroui/react";
+import { KanbanCard } from "./KanbanCard";
 
 interface ColumnProps {
   column: ColumnType;
   onDrop: (taskId: string, targetColumnId: string) => void;
-  onViewContactData: (arg0: Contact | null) => void;
+  onViewContactData: (contact: Contact | null) => void;
+  onRatingContact: (contact: Contact | null) => void;
   dragState?: {
     originColumnId: string | null;
     isDragging: boolean;
     onDragStart: (columnId: string) => void;
     onDragEnd?: () => void;
   };
+  columnHeight: number;
 }
 
 export const KanbanColumn = ({
   column,
-  onDrop,
   dragState,
+  columnHeight,
+  onDrop,
+  onRatingContact,
   onViewContactData,
 }: ColumnProps) => {
   const [isOver, setIsOver] = useState(false);
@@ -32,7 +36,6 @@ export const KanbanColumn = ({
     e.preventDefault();
     e.stopPropagation();
 
-    // Solo aplica si no es la columna de origen
     if (column.id !== originColumnId) {
       dragCounter.current += 1;
       setIsOver(true);
@@ -41,64 +44,56 @@ export const KanbanColumn = ({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation();
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation();
-
     dragCounter.current -= 1;
-    if (dragCounter.current === 0) {
-      setIsOver(false);
-    }
+    if (dragCounter.current === 0) setIsOver(false);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation();
-
     const taskId = e.dataTransfer.getData("text/plain");
     dragCounter.current = 0;
     setIsOver(false);
     onDrop(taskId, column.id);
   };
 
-  // 🔹 Estilos visuales
-  let borderClass = "border-gray-200";
-  let bgClass = "";
+  const borderClass =
+    isOver && column.id !== originColumnId
+      ? "border-blue-500"
+      : isDragging && column.id !== originColumnId
+      ? "border-blue-300 border-dashed"
+      : "border-gray-200";
 
-  if (isDragging && column.id !== originColumnId) {
-    borderClass = "border-blue-300 border-dashed";
-  }
-
-  if (isOver && column.id !== originColumnId) {
-    borderClass = "border-blue-500";
-    bgClass = "bg-blue-50";
-  }
+  const bgClass = isOver && column.id !== originColumnId ? "bg-blue-50" : "";
 
   return (
     <div
+      className={`flex flex-col w-80 gap-3 p-4 rounded-2xl border-2 transition-all duration-200 ease-in-out ${borderClass} ${bgClass}`}
+      style={{ minHeight: columnHeight }}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col w-80 gap-3 p-4 rounded-2xl min-h-[300px] border-2 transition-all duration-200 ease-in-out ${borderClass} ${bgClass}`}
     >
       <div className="flex justify-between">
         <h2 className="font-semibold text-gray-700">{column.title}</h2>
         <div className="bg-blue-800 text-white font-bold rounded-full w-6 h-6 flex justify-center items-center">
-          <h5>{column?.contacts?.length || 0}</h5>
+          <h5>{column.contacts.length}</h5>
         </div>
       </div>
 
       <Divider />
-      <div className="flex flex-col gap-2">
+
+      <div className="flex flex-col gap-2 flex-1">
         {column.contacts.map((contact) => (
           <KanbanCard
             key={contact.id}
             contact={contact}
             columnId={column.id}
+            onRatingContact={onRatingContact}
             onViewContactData={onViewContactData}
             onDragStart={dragState?.onDragStart}
             onDragEnd={dragState?.onDragEnd}

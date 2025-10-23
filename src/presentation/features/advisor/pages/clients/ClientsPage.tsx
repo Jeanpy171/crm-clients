@@ -46,7 +46,7 @@ const ClientsPage = () => {
 
     try {
       // Map form data to ClientDTO
-      const clientDTO: Omit<ClientDTO, "history"> = {
+      const clientDTO: Omit<ClientDTO, "history" | "type"> = {
         id: `client_${Date.now()}`, // Generate unique ID
         name: clientData.name,
         company:

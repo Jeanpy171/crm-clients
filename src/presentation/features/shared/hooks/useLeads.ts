@@ -4,10 +4,15 @@ import type {
   AppDispatch,
   RootState,
 } from "../../../../infrastructure/store/store";
-import { getLeads } from "../../../../infrastructure/store/slices/leads";
+import {
+  getLeads,
+  updateLeadPhase,
+} from "../../../../infrastructure/store/slices/leads";
 import { LeadMapper } from "../../../../infrastructure/http/mappers/LeadMapper";
 import { useAuth } from "./useAuth";
 import { ContactMapper } from "../../../../infrastructure/http/mappers/ContactMapper";
+import type { InteractionPhase } from "../../../../core/domain/value-objects/contact";
+import type { ContactDTO } from "../../../../core/application/dtos/contact/ContactDTO";
 
 export const useLeads = () => {
   const { user } = useAuth();
@@ -24,6 +29,10 @@ export const useLeads = () => {
 
   const handleGetLeads = (advisorId: string) => {
     dispatch(getLeads({ page: 1, limit: 20, advisorId: advisorId }));
+  };
+
+  const handleUpdateLead = (params: { id: string } & Partial<ContactDTO>) => {
+    dispatch(updateLeadPhase(params));
   };
 
   // const handleSaveLead = async (lead: LeadDTO) => {
@@ -53,5 +62,6 @@ export const useLeads = () => {
     isLoading,
     error,
     handleGetLeads,
+    handleUpdateLead,
   };
 };

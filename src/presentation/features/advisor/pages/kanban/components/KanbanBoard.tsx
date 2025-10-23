@@ -3,9 +3,15 @@ import type { Contact } from "../../../../../../core/domain/entities/Contact";
 import { KanbanColumn } from "./KanbanColumn";
 import { useLeads } from "../../../../shared/hooks/useLeads";
 import { useClients } from "../../../../shared/hooks/useClients";
-import { InteractionPhase } from "../../../../../../core/domain/value-objects/contact";
+import {
+  ContactStatus,
+  InteractionPhase,
+} from "../../../../../../core/domain/value-objects/contact";
 import { addToast } from "@heroui/react";
 import { ContactTracingModal } from "../../../../shared/components/contact-tracing-modal/ContactTracingModal";
+import { container } from "../../../../../../config/di-container";
+import type { HistoryDTO } from "../../../../../../core/application/dtos/contact/HistoryDTO";
+import { RatingContactModal } from "./RatingContactModal";
 
 export interface ColumnType {
   id: string;
@@ -16,13 +22,14 @@ export interface ColumnType {
 
 export const KanbanBoard = () => {
   const [columns, setColumns] = useState<ColumnType[]>([]);
-  const { leads } = useLeads();
-  const { clients } = useClients();
+  const { leads, handleUpdateLead } = useLeads();
+  const { clients, handleUpdateClient } = useClients();
   const [dragState, setDragState] = useState<{
     originColumnId: string | null;
     isDragging: boolean;
   }>({ originColumnId: null, isDragging: false });
   const [isShowContactData, setIsShowContactData] = useState(false);
+  const [isRatingContact, setIsRatingContact] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   const handleDragStart = (columnId: string) => {
@@ -33,57 +40,84 @@ export const KanbanBoard = () => {
     setDragState({ originColumnId: null, isDragging: false });
   };
 
-  // useEffect(() => {
-  //   if (!clients.length) {
-  //     handleGetClients(user?.id ?? "");
-  //   }
-  // }, [user, clients]);
-
-  // useEffect(() => {
-  //   if (!leads.length) {
-  //     handleGetLeads(user?.id ?? "");
-  //   }
-  // }, [user, leads]);
-
   useEffect(() => {
     handleSortByColumn();
   }, [leads, clients]);
 
-  const handleDrop = (id: string, targetColumnId: string) => {
-    let movingContact: Contact | null = null;
-    let columnName: string | null = null;
+  const handleDrop = async (id: string, targetColumnId: string) => {
+    const prev = columns;
 
-    setColumns((prev) => {
-      const sourceCol = prev.find((col) =>
-        col.contacts.some((c) => c.id === id)
-      );
-      if (!sourceCol) return prev;
+    const sourceCol = prev.find((col) => col.contacts.some((c) => c.id === id));
+    if (!sourceCol) return;
 
-      movingContact = sourceCol.contacts.find((c) => c.id === id)!;
+    if (sourceCol.id === targetColumnId) {
+      handleDragEnd();
+      return;
+    }
 
-      const withoutSource = prev.map((col) =>
-        col.id === sourceCol.id
-          ? { ...col, contacts: col.contacts.filter((c) => c.id !== id) }
-          : col
-      );
+    const movingContact = sourceCol.contacts.find((c) => c.id === id);
+    if (!movingContact) {
+      handleDragEnd();
+      return;
+    }
 
-      const updated = withoutSource.map((col) => {
-        if (col.id === targetColumnId && movingContact) {
-          columnName = col.title;
-          return { ...col, contacts: [...col.contacts, movingContact] };
-        }
-        return col;
-      });
+    const targetCol = prev.find((col) => col.id === targetColumnId);
+    if (!targetCol) {
+      handleDragEnd();
+      return;
+    }
 
-      return updated;
+    const updatedColumns = prev.map((col) => {
+      if (col.id === sourceCol.id) {
+        return {
+          ...col,
+          contacts: col.contacts.filter((c) => c.id !== id),
+        };
+      }
+      if (col.id === targetCol.id) {
+        return {
+          ...col,
+          contacts: [...col.contacts, movingContact],
+        };
+      }
+      return col;
     });
 
-    if (movingContact) {
+    setColumns(updatedColumns);
+
+    addToast({
+      title: `Contacto movido a etapa ${targetCol.title}`,
+      description: `El cliente ${movingContact.name} se ha desplazado correctamente`,
+      color: "success",
+      timeout: 2500,
+    });
+
+    try {
+      const history: HistoryDTO = {
+        id: crypto?.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random()}`,
+        action: "UPDATE",
+        createdAt: new Date(),
+        idContact: movingContact.id,
+        newInteractionPhase: targetCol.id as InteractionPhase,
+        pastInteractionPhase: movingContact.interactionPhase,
+        type: "CLIENT",
+      };
+
+      const newHistory = await container.saveHistoryUseCase.execute(history);
+      console.warn("HISTORICO: ", movingContact.history);
+
+      movingContact.setHistory([...(movingContact.history || []), newHistory]);
+
+      movingContact.interactionPhase = targetCol.id as InteractionPhase;
+    } catch (error) {
+      console.error("Error registrando el movimiento:", error);
       addToast({
-        title: `Contacto movido a etapa ${columnName}`,
-        description: `El cliente ${movingContact.name} se ha desplazado correctamente`,
-        color: "success",
-        timeout: 2500,
+        title: "Error al registrar movimiento",
+        description: "No se pudo registrar el cambio de etapa.",
+        color: "danger",
+        timeout: 3000,
       });
     }
 
@@ -92,10 +126,6 @@ export const KanbanBoard = () => {
 
   const handleSortByColumn = () => {
     const mixedContacts = [...clients, ...leads];
-    // const formattedContacts = mixedContacts.map((contact) => ({
-    //   id: contact.id,
-    //   ...contact.data,
-    // }));
 
     const filterByGrades =
       mixedContacts.filter(
@@ -148,6 +178,15 @@ export const KanbanBoard = () => {
     setIsShowContactData(true);
   };
 
+  const handleViewRatingContact = (contact: Contact | null) => {
+    setSelectedContact(contact);
+    setIsRatingContact(true);
+  };
+
+  const maxColumnHeight = Math.max(
+    ...columns.map((c) => c.contacts.length * 100 + 100)
+  );
+
   return (
     <div className="flex gap-4 min-h-screen justify-between items-start">
       <ContactTracingModal
@@ -155,6 +194,35 @@ export const KanbanBoard = () => {
         contact={selectedContact}
         isOpen={isShowContactData}
         onClose={() => setIsShowContactData(false)}
+      />
+      <RatingContactModal
+        size="3xl"
+        name={selectedContact?.name || ""}
+        company={selectedContact?.company || ""}
+        isOpen={isRatingContact}
+        onClose={() => setIsRatingContact(false)}
+        onSuccess={() => {
+          selectedContact?.setStatus(ContactStatus.LOYAL);
+          selectedContact?.setInteractionPhase(InteractionPhase.CLOSING);
+          if (selectedContact?.type === "CLIENT") {
+            handleUpdateClient({
+              id: selectedContact.id,
+              status: ContactStatus.LOYAL,
+              interactionPhase: InteractionPhase.CLOSING,
+            });
+          } else {
+            handleUpdateLead({
+              id: selectedContact?.id || "",
+              status: ContactStatus.LOYAL,
+              interactionPhase: InteractionPhase.CLOSING,
+            });
+          }
+          setIsRatingContact(false);
+        }}
+        onFailed={() => {
+          selectedContact?.setStatus(ContactStatus.LOST);
+          setIsRatingContact(false);
+        }}
       />
       {columns.map((col) => (
         <KanbanColumn
@@ -167,6 +235,8 @@ export const KanbanBoard = () => {
             onDragEnd: handleDragEnd,
           }}
           onViewContactData={handleViewContactData}
+          onRatingContact={handleViewRatingContact}
+          columnHeight={maxColumnHeight}
         />
       ))}
     </div>

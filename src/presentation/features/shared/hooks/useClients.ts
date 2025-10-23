@@ -8,11 +8,13 @@ import { addToast } from "@heroui/react";
 import {
   getClients,
   saveClient,
+  updateClientPhase,
 } from "../../../../infrastructure/store/slices/clients";
 import type { ClientDTO } from "../../../../core/application/dtos/clients/ClientDTO";
-import { ClientMapper } from "../../../../infrastructure/http/mappers/ClientMapper";
 import { useAuth } from "./useAuth";
 import { ContactMapper } from "../../../../infrastructure/http/mappers/ContactMapper";
+import type { InteractionPhase } from "../../../../core/domain/value-objects/contact";
+import type { ContactDTO } from "../../../../core/application/dtos/contact/ContactDTO";
 
 export const useClients = () => {
   const { user } = useAuth();
@@ -32,7 +34,13 @@ export const useClients = () => {
     dispatch(getClients({ page: 1, limit: 20, advisorId }));
   };
 
-  const handleSaveClient = async (client: Omit<ClientDTO, "history">) => {
+  const handleUpdateClient = (params: { id: string } & Partial<ContactDTO>) => {
+    dispatch(updateClientPhase(params));
+  };
+
+  const handleSaveClient = async (
+    client: Omit<ClientDTO, "history" | "type">
+  ) => {
     try {
       const resultAction = await dispatch(saveClient(client));
       console.log("Resultado del saveClient:", resultAction);
@@ -78,5 +86,6 @@ export const useClients = () => {
     error,
     handleGetClients,
     handleSaveClient,
+    handleUpdateClient,
   };
 };

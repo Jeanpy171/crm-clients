@@ -7,6 +7,8 @@ import { container } from "../../../config/di-container";
 import { addToast } from "@heroui/react";
 import type { ClientDTO } from "../../../core/application/dtos/clients/ClientDTO";
 import type { FilterClientsParams } from "../../../core/domain/repositories/IClientRepository";
+import type { InteractionPhase } from "../../../core/domain/value-objects/contact";
+import type { ContactDTO } from "../../../core/application/dtos/contact/ContactDTO";
 
 export interface ClientState {
   clients: ClientDTO[];
@@ -32,7 +34,7 @@ export const getClients = createAsyncThunk(
 
 export const saveClient = createAsyncThunk(
   "clients/saveClient",
-  async (task: Omit<ClientDTO, "history">) => {
+  async (task: Omit<ClientDTO, "history" | "type">) => {
     return await saveClientRepository.execute(task);
   }
 );
@@ -40,7 +42,22 @@ export const saveClient = createAsyncThunk(
 const clientSlice = createSlice({
   name: "clients",
   initialState,
-  reducers: {},
+  reducers: {
+    updateClientPhase: (
+      state,
+      action: PayloadAction<Partial<ContactDTO> & { id: string }>
+    ) => {
+      const clientIndex = state.clients.findIndex(
+        (c) => c.id === action.payload.id
+      );
+      if (clientIndex !== -1) {
+        state.clients[clientIndex] = {
+          ...state.clients[clientIndex],
+          ...action.payload,
+        };
+      }
+    },
+  },
   extraReducers(builder) {
     builder.addCase(getClients.pending, (state) => {
       (state.error = null), (state.isLoading = true);
@@ -80,5 +97,7 @@ const clientSlice = createSlice({
     });
   },
 });
+
+export const { updateClientPhase } = clientSlice.actions;
 
 export default clientSlice.reducer;

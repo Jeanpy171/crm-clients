@@ -1,33 +1,43 @@
-import { useEffect, useState } from "react";
-import { container } from "../../../../config/di-container";
+import { useEffect, useState, useMemo, useRef } from "react";
 import type { HistoryDTO } from "../../../../core/application/dtos/contact/HistoryDTO";
+import { container } from "../../../../config/di-container";
 
 export const useContactHistory = (
   id: string | null,
   initialHistory: HistoryDTO[] = []
 ) => {
-  const [history, setHistory] = useState<HistoryDTO[]>(initialHistory);
+  const [remoteHistory, setRemoteHistory] = useState<HistoryDTO[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!id) return;
-    if (history.length) return;
+  const hasFetchedRemote = useRef(false);
 
-    handleGetHistoryById(id);
+  useEffect(() => {
+    if (!id || hasFetchedRemote.current) return;
+
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await container.getHistoryUseCase.execute(id);
+        setRemoteHistory(data);
+        hasFetchedRemote.current = true;
+      } catch (e: any) {
+        setError(e.message || "Error al cargar historial");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
-  const handleGetHistoryById = async (id: string) => {
-    try {
-      setIsLoading(true);
-      const data = await container.getHistoryUseCase.execute(id);
-      setHistory(data);
-    } catch (e: any) {
-      setError(e.message || "Error al cargar historial");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const history = useMemo(() => {
+    const map = new Map<string, HistoryDTO>();
+    [...remoteHistory, ...initialHistory].forEach((h) => {
+      map.set(h.id, h);
+    });
+    return Array.from(map.values());
+  }, [remoteHistory, initialHistory]);
 
-  return { history, setHistory, isLoading, error, handleGetHistoryById };
+  return { history, isLoading, error, setRemoteHistory };
 };

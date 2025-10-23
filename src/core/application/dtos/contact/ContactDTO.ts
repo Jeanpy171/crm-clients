@@ -11,6 +11,7 @@ export interface ContactDTO {
   company: string;
   email: string;
   phone: string;
+  type: "CLIENT" | "LEAD";
   interactionPhase: InteractionPhase;
   interestLevel: InterestLevel;
   status: ContactStatus;

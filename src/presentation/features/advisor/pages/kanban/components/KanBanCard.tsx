@@ -2,21 +2,24 @@ import { useState } from "react";
 import type { Contact } from "../../../../../../core/domain/entities/Contact";
 import { Button, Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { InteractionPhase } from "../../../../../../core/domain/value-objects/contact";
+import { formatDateWithTime } from "../../../../shared/helpers/date";
 
 interface KanbanCardProps {
   contact: Contact;
   onDragStart?: (columnId: string, cardId: string) => void;
   onDragEnd?: () => void;
   onViewContactData: (arg0: Contact | null) => void;
+  onRatingContact: (contact: Contact | null) => void;
   columnId?: string;
 }
 
 export const KanbanCard = ({
   contact,
+  columnId,
   onDragStart,
   onDragEnd,
   onViewContactData,
-  columnId,
+  onRatingContact,
 }: KanbanCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const { id, name, company, interestLevel, lastActivity, interactionPhase } =
@@ -58,7 +61,7 @@ export const KanbanCard = ({
         <Description field="Interés" value={interestLevel} />
         <Description
           field="Última Actividad"
-          value={lastActivity.toDateString()}
+          value={formatDateWithTime(lastActivity)}
         />
         <div className="flex flex-wrap gap-2 mt-2 w-full justify-start">
           <Button
@@ -74,7 +77,12 @@ export const KanbanCard = ({
               Avanzar
             </Button>
           )}
-          <Button size="sm" color="warning" variant="flat">
+          <Button
+            onPress={() => onRatingContact(contact)}
+            size="sm"
+            color="warning"
+            variant="flat"
+          >
             Calificar
           </Button>
           <Button size="sm" color="danger" variant="flat">

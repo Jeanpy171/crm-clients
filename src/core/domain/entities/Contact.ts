@@ -17,6 +17,7 @@ export class Contact {
     public company: string,
     public email: string,
     public phone: string,
+    public type: "CLIENT" | "LEAD",
     // public sector: string,
     public interactionPhase: InteractionPhase,
     public interestLevel: InterestLevel,
@@ -41,6 +42,7 @@ export class Contact {
     company: string;
     email: string;
     phone: string;
+    type: "CLIENT" | "LEAD";
     // sector: string;
     interactionPhase: InteractionPhase;
     interestLevel: InterestLevel;
@@ -72,6 +74,7 @@ export class Contact {
       props.company,
       props.email,
       props.phone,
+      props.type,
       interactionPhase.value,
       interestLevel.value,
       contactState.value,
@@ -100,8 +103,20 @@ export class Contact {
     return this.history;
   }
 
-  setHisyoty(history: HistoryDTO[]) {
+  setHistory(history: HistoryDTO[]) {
     this.history = history;
+  }
+
+  setStatus(status: ContactStatus) {
+    this.status = status;
+  }
+
+  setInterestLevel(interestLevel: InterestLevel) {
+    this.interestLevel = interestLevel;
+  }
+
+  setInteractionPhase(interactionPhase: InteractionPhase) {
+    this.interactionPhase = interactionPhase;
   }
 
   // async getHistory(id: string): Promise<HistoryDTO[]> {
@@ -117,6 +132,7 @@ export class Contact {
       company: this.company,
       email: this.email,
       phone: this.phone,
+      type: this.type,
       interactionPhase: this.interactionPhase,
       interestLevel: this.interestLevel,
       status: this.status,

@@ -8,6 +8,7 @@ import { addToast } from "@heroui/react";
 import type { LeadDTO } from "../../../core/application/dtos/leads/LeadDTO";
 import type { FilterLeadsParams } from "../../../core/domain/repositories/ILeadRepository";
 import type { ContactDTO } from "../../../core/application/dtos/contact/ContactDTO";
+import type { InteractionPhase } from "../../../core/domain/value-objects/contact";
 
 export interface LeadState {
   leads: LeadDTO[];
@@ -41,7 +42,22 @@ export const saveLead = createAsyncThunk(
 const leadSlice = createSlice({
   name: "leads",
   initialState,
-  reducers: {},
+  reducers: {
+    updateLeadPhase: (
+      state,
+      action: PayloadAction<Partial<ContactDTO> & { id: string }>
+    ) => {
+      const clientIndex = state.leads.findIndex(
+        (c) => c.id === action.payload.id
+      );
+      if (clientIndex !== -1) {
+        state.leads[clientIndex] = {
+          ...state.leads[clientIndex],
+          ...action.payload,
+        };
+      }
+    },
+  },
   extraReducers(builder) {
     builder.addCase(getLeads.pending, (state) => {
       (state.error = null), (state.isLoading = true);
@@ -81,5 +97,7 @@ const leadSlice = createSlice({
     });
   },
 });
+
+export const { updateLeadPhase } = leadSlice.actions;
 
 export default leadSlice.reducer;

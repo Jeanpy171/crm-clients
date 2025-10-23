@@ -28,6 +28,7 @@ import { GetClientsUseCase } from "../core/application/use-cases/clients/GetClie
 import { SaveClientUseCase } from "../core/application/use-cases/clients/SaveClientUseCase";
 import { SaveLeadUseCase } from "../core/application/use-cases/leads/SaveLeadUseCase";
 import { GetHistoryUseCase } from "../core/application/use-cases/history/GetHistoryUseCase";
+import { SaveHistoryUseCase } from "../core/application/use-cases/history/SaveHistoryUseCase";
 
 class DIContainer {
   // ============ MOCK REPOSITORIES ============
@@ -83,6 +84,7 @@ class DIContainer {
 
   // ============ USE CASES - HISTORY ============
   getHistoryUseCase = new GetHistoryUseCase(this.clientRepository);
+  saveHistoryUseCase = new SaveHistoryUseCase(this.clientRepository);
   // ============ USE CASES - Clients ============
   getClientsUseCase = new GetClientsUseCase(this.clientRepository);
   saveClientUseCase = new SaveClientUseCase(this.clientRepository);

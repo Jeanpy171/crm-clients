@@ -7,7 +7,7 @@ export class SaveClientUseCase {
   constructor(repository: IClientRepository) {
     this.repository = repository;
   }
-  async execute(client: Omit<ClientDTO, "history">) {
+  async execute(client: Omit<ClientDTO, "history" | "type">) {
     return this.repository.save(client);
   }
 }

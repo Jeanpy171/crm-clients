@@ -12,7 +12,7 @@ export interface IClientRepository extends IHistoryRepository {
   getAll(params: FilterClientsParams): Promise<ContactDTO[]>;
   // getAllByAdvisorId(id: string): Promise<ClientDTO[]>;
   getById(id: string): Promise<any | null>;
-  save(client: Omit<ClientDTO, "history">): Promise<ClientDTO>;
+  save(client: Omit<ClientDTO, "history" | "type">): Promise<ClientDTO>;
   delete(id: string): Promise<void>;
   patch(id: string, updates: Partial<ClientDTO>): Promise<void>;
 }
