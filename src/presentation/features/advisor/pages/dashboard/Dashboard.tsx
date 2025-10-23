@@ -1,13 +1,9 @@
 import React from "react";
 import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import type { Task } from "../../../../../core/domain/entities/Task";
 import { TaskStatus } from "../../../../../core/domain/value-objects/task";
 import StatsGrid from "../../../shared/components/stats-grid/StatsGrid";
-
-interface AdvisorDashboardProps {
-  tasks: Task[];
-}
+import { useTasks } from "../../../shared/hooks/useTasks";
 
 // Mock data for the dashboard
 const mockStats = [
@@ -73,20 +69,78 @@ const mockStats = [
   },
 ];
 
-const DashboardPage: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
-  // Calculate overdue tasks without management
-  const overdueUnmanagedTasks = tasks?.filter((task) => {
+const DashboardPage: React.FC = () => {
+  // Hooks para obtener datos
+  const { tasks, isLoading } = useTasks();
+
+  // Debug logs para verificar datos
+  console.log("Dashboard - Tasks:", tasks);
+  console.log("Dashboard - Tasks loading:", isLoading);
+
+  // Filter active and scheduled tasks
+  const activeTasks = tasks?.filter((task) =>
+    task.status === TaskStatus.OPENED || task.status === TaskStatus.PROGRAMED
+  ) || [];
+
+  // Debug log para tareas activas
+  console.log("Dashboard - Active tasks:", activeTasks);
+  console.log("Dashboard - Active tasks count:", activeTasks.length);
+
+  // Calculate overdue tasks without management (considering both date and time)
+  const overdueUnmanagedTasks = activeTasks.filter((task) => {
     const dueDate = new Date(task.dueDate);
     const now = new Date();
-    return dueDate < now && task.status === TaskStatus.OPENED;
+    
+    // Comparar fecha y hora completas
+    const isOverdue = dueDate < now;
+    const isOpenStatus = task.status === TaskStatus.OPENED;
+    
+    // Debug log para cada tarea
+    console.log(`Task ${task.id} - Due: ${dueDate.toLocaleString()}, Now: ${now.toLocaleString()}, Is Overdue: ${isOverdue}, Status: ${task.status}, Is Open: ${isOpenStatus}`);
+    
+    return isOverdue && isOpenStatus;
   });
 
-  // Update the stats with calculated value
-  const updatedStats = mockStats.map((stat) =>
-    stat.id === "overdue-tasks"
-      ? { ...stat, value: overdueUnmanagedTasks?.length }
-      : stat
-  );
+  // Debug log para tareas atrasadas
+  console.log("Dashboard - Overdue tasks:", overdueUnmanagedTasks);
+  console.log("Dashboard - Overdue tasks count:", overdueUnmanagedTasks.length);
+
+  // Combinar todas las tareas en una sola lista
+  const allTasks = [...activeTasks];
+  console.log("Dashboard - All tasks combined:", allTasks);
+  console.log("Dashboard - All tasks count:", allTasks.length);
+
+  // Update the stats with calculated values
+  const updatedStats = mockStats.map((stat) => {
+    switch (stat.id) {
+      case "overdue-tasks":
+        return { ...stat, value: overdueUnmanagedTasks?.length };
+      case "pending-tasks":
+        return { ...stat, value: activeTasks?.length };
+      case "completed-tasks":
+        const completedTasks = tasks?.filter((task) => task.status === TaskStatus.COMPLETED) || [];
+        return { ...stat, value: completedTasks.length };
+      default:
+        return stat;
+    }
+  });
+
+  // Debug log para estadísticas actualizadas
+  console.log("Dashboard - Updated stats:", updatedStats);
+
+  // Mostrar estado de carga
+  if (isLoading) {
+    return (
+      <div className="space-y-4 sm:space-y-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+          Mi Dashboard
+        </h2>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-gray-500">Cargando dashboard...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -100,12 +154,15 @@ const DashboardPage: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
         <Card>
           <CardBody className="p-3 sm:p-5">
             <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
-              Próximas Tareas
+              Tareas
             </h3>
-            <div className="space-y-2 sm:space-y-3">
-              {tasks?.length > 0 ? (
-                tasks.slice(0, 5).map((task) => {
+            <div className="space-y-3">
+              {allTasks?.length > 0 ? (
+                allTasks.slice(0, 5).map((task) => {
                   const dueDate = new Date(task.dueDate);
+                  const now = new Date();
+                  const isOverdue = dueDate < now && task.status === TaskStatus.OPENED;
+                  
                   const isToday =
                     dueDate.toDateString() === new Date().toDateString();
                   const isTomorrow =
@@ -115,7 +172,15 @@ const DashboardPage: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
                     hour: "2-digit",
                     minute: "2-digit",
                   });
-                  const dateString = isToday
+                  
+                  const dateString = isOverdue
+                    ? `Vencida: ${dueDate.toLocaleDateString("es-ES", { 
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                      })}, ${timeString}`
+                    : isToday
                     ? "Hoy"
                     : isTomorrow
                     ? "Mañana"
@@ -136,78 +201,119 @@ const DashboardPage: React.FC<AdvisorDashboardProps> = ({ tasks }) => {
                     }
                   };
 
-                  const getTaskColor = (type: string) => {
+                  const getTaskCardStyle = (type: string, isOverdue: boolean) => {
+                    // Si está atrasada, usar formato rojo
+                    if (isOverdue) {
+                      return {
+                        bg: "bg-red-100",
+                        text: "text-red-800",
+                        icon: "text-red-600",
+                        border: "border-l-4 border-red-500"
+                      };
+                    }
+                    
+                    // Formato normal según tipo
                     switch (type) {
                       case "Llamada":
-                        return "bg-blue-50 border-blue-100 bg-blue-100 text-blue-600";
-                      case "Mensaje":
-                        return "bg-green-50 border-green-100 bg-green-100 text-green-600";
+                        return {
+                          bg: "bg-blue-100",
+                          text: "text-blue-800",
+                          icon: "text-blue-600",
+                          border: ""
+                        };
                       case "Correo":
-                        return "bg-purple-50 border-purple-100 bg-purple-100 text-purple-600";
+                        return {
+                          bg: "bg-purple-100",
+                          text: "text-purple-800",
+                          icon: "text-purple-600",
+                          border: ""
+                        };
                       case "Reunión presencial":
-                        return "bg-amber-50 border-amber-100 bg-amber-100 text-amber-600";
+                        return {
+                          bg: "bg-orange-100",
+                          text: "text-orange-800",
+                          icon: "text-orange-600",
+                          border: ""
+                        };
+                      case "Mensaje":
+                        return {
+                          bg: "bg-green-100",
+                          text: "text-green-800",
+                          icon: "text-green-600",
+                          border: ""
+                        };
                       default:
-                        return "bg-gray-50 border-gray-100 bg-gray-100 text-gray-600";
+                        return {
+                          bg: "bg-gray-100",
+                          text: "text-gray-800",
+                          icon: "text-gray-600",
+                          border: ""
+                        };
                     }
                   };
 
-                  const getStatusColor = (status: string) => {
+                  const getStatusChip = (status: string, isOverdue: boolean) => {
+                    // Si está atrasada, mostrar chip "ATRASADA"
+                    if (isOverdue) {
+                      return { text: "ATRASADA", bg: "bg-red-200", textColor: "text-red-700" };
+                    }
+                    
+                    // Chips normales según estado
                     switch (status) {
-                      case "abierto":
-                        return "bg-blue-100 text-blue-700";
-                      case "programada":
-                        return "bg-amber-100 text-amber-700";
-                      case "completada":
-                        return "bg-green-100 text-green-700";
-                      case "cerrada":
-                        return "bg-red-100 text-red-700";
+                      case TaskStatus.OPENED:
+                        return { text: "Pendiente", bg: "bg-blue-100", textColor: "text-blue-700" };
+                      case TaskStatus.PROGRAMED:
+                        return { text: "Programada", bg: "bg-yellow-100", textColor: "text-orange-700" };
+                      case TaskStatus.COMPLETED:
+                        return { text: "Completada", bg: "bg-green-100", textColor: "text-green-700" };
                       default:
-                        return "bg-gray-100 text-gray-700";
+                        return { text: "Cerrada", bg: "bg-gray-100", textColor: "text-gray-700" };
                     }
                   };
+
+                  const cardStyle = getTaskCardStyle(task.type, isOverdue);
+                  const statusChip = getStatusChip(task.status, isOverdue);
 
                   return (
                     <div
                       key={task.id}
-                      className={`p-2 sm:p-3 rounded-md border flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 ${getTaskColor(
-                        task.type
-                      )}`}
+                      className={`${cardStyle.bg} rounded-lg p-4 flex items-center gap-3 shadow-sm ${cardStyle.border}`}
                     >
-                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                        <div className="p-1.5 sm:p-2 rounded-full flex-shrink-0">
-                          <Icon
-                            icon={getTaskIcon(task.type)}
-                            className="text-sm sm:text-base"
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium text-sm sm:text-base truncate">
-                            {task.type} con {task.advisor}
-                          </p>
-                          <p className="text-xs sm:text-sm text-gray-500 truncate">
-                            {dateString}, {timeString}
-                          </p>
-                        </div>
+                      {/* Icono */}
+                      <div className={`p-2 rounded-full ${isOverdue ? 'bg-red-200' : cardStyle.bg}`}>
+                        <Icon
+                          icon={isOverdue ? 'lucide:alert-triangle' : getTaskIcon(task.type)}
+                          className={`w-5 h-5 ${cardStyle.icon}`}
+                        />
                       </div>
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${getStatusColor(
-                          task.status
-                        )}`}
-                      >
-                        {task.status === TaskStatus.OPENED
-                          ? "Pendiente"
-                          : task.status === TaskStatus.PROGRAMED
-                          ? "Programada"
-                          : task.status === TaskStatus.COMPLETED
-                          ? "Completada"
-                          : "Cerrada"}
-                      </span>
+                      
+                      {/* Contenido principal */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className={`font-medium ${cardStyle.text} truncate`}>
+                          {task.type} con {task.advisor}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {dateString}, {timeString}
+                        </p>
+                      </div>
+                      
+                      {/* Chip de estado */}
+                      <div className={`px-3 py-1 rounded-full ${statusChip.bg}`}>
+                        <span className={`text-xs font-medium ${statusChip.textColor}`}>
+                          {statusChip.text}
+                        </span>
+                      </div>
                     </div>
                   );
                 })
               ) : (
                 <div className="text-center text-gray-500 py-4">
-                  No hay tareas pendientes
+                  <div className="space-y-2">
+                    <Icon icon="lucide:check-circle" className="w-8 h-8 mx-auto text-gray-400" />
+                    <p>No hay tareas pendientes</p>
+                    <p className="text-sm">Total de tareas: {tasks?.length || 0}</p>
+                    <p className="text-sm">Tareas activas: {activeTasks.length}</p>
+                  </div>
                 </div>
               )}
             </div>
