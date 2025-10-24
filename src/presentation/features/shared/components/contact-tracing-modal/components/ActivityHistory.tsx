@@ -43,7 +43,7 @@ export const ActivityHistory = ({
           <p>Cargando...</p>
         ) : updatedHistory.length ? (
           <ul className="relative flex flex-col gap-6 pl-6 before:absolute before:left-3 before:top-0 before:h-full before:w-[2px] before:bg-gray-300">
-            {updatedHistory.map((h) => (
+            {updatedHistory.map((h, index) => (
               <li key={h.id} className="relative flex flex-col gap-2">
                 <div className="absolute left-[-6px] top-1.5 w-3 h-3 rounded-full bg-blue-800 border-2 border-white"></div>
 
@@ -64,7 +64,9 @@ export const ActivityHistory = ({
 
                   <p className="text-sm text-gray-700">
                     {h.action === "UPDATE"
-                      ? `Se cambió de etapa ${h.pastInteractionPhase} → ${h.newInteractionPhase}`
+                      ? `Se cambió de etapa ${updatedHistory[index - 1].interactionPhase} → ${
+                          h.interactionPhase
+                        }`
                       : "Se creó el contacto en el sistema."}
                   </p>
                 </div>
