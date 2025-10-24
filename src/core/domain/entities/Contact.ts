@@ -119,6 +119,10 @@ export class Contact {
     this.interactionPhase = interactionPhase;
   }
 
+  setLastActivity(lastActivity: Date) {
+    this.lastActivity = lastActivity;
+  }
+
   // async getHistory(id: string): Promise<HistoryDTO[]> {
   //   const historyUseCase = container.getHistoryUseCase;
   //   const history = await historyUseCase.execute(id);

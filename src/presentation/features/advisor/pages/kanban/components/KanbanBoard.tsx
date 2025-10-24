@@ -44,6 +44,54 @@ export const KanbanBoard = () => {
     handleSortByColumn();
   }, [leads, clients]);
 
+  const handleCreateHistory = async (contact: Contact) => {
+    try {
+      const history: HistoryDTO = {
+        id: crypto?.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random()}`,
+        action: "UPDATE",
+        status: ContactStatus.PROSPECT,
+        createdAt: new Date(),
+        idContact: contact.id,
+        interactionPhase: contact.interactionPhase,
+        // pastInteractionPhase: contact.interactionPhase,
+        type: contact.type,
+      };
+
+      const newHistory = await container.saveHistoryUseCase.execute(history);
+      console.warn("HISTORICO: ", contact.history);
+
+      contact.setHistory([...(contact.history || []), newHistory]);
+      contact.setLastActivity(new Date());
+
+      if (contact?.type === "CLIENT") {
+        handleUpdateClient({
+          ...contact.toJSON(),
+        });
+      } else {
+        handleUpdateLead({
+          ...contact.toJSON(),
+        });
+      }
+
+      addToast({
+        title: `Contacto movido a etapa ${contact.interactionPhase}`,
+        description: `El cliente ${contact.name} se ha desplazado correctamente`,
+        color: "success",
+        timeout: 2500,
+      });
+    } catch (error) {
+      console.error("Error registrando el movimiento:", error);
+      addToast({
+        title: "Error al registrar movimiento",
+        description: "No se pudo registrar el cambio de etapa.",
+        color: "danger",
+        timeout: 3000,
+      });
+    }
+  };
+
   const handleDrop = async (id: string, targetColumnId: string) => {
     const prev = columns;
 
@@ -85,41 +133,39 @@ export const KanbanBoard = () => {
 
     setColumns(updatedColumns);
 
-    addToast({
-      title: `Contacto movido a etapa ${targetCol.title}`,
-      description: `El cliente ${movingContact.name} se ha desplazado correctamente`,
-      color: "success",
-      timeout: 2500,
-    });
+    movingContact.setInteractionPhase(targetCol.id as InteractionPhase);
 
-    try {
-      const history: HistoryDTO = {
-        id: crypto?.randomUUID
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random()}`,
-        action: "UPDATE",
-        createdAt: new Date(),
-        idContact: movingContact.id,
-        newInteractionPhase: targetCol.id as InteractionPhase,
-        pastInteractionPhase: movingContact.interactionPhase,
-        type: "CLIENT",
-      };
+    handleCreateHistory(movingContact);
 
-      const newHistory = await container.saveHistoryUseCase.execute(history);
-      console.warn("HISTORICO: ", movingContact.history);
+    // try {
+    //   const history: HistoryDTO = {
+    //     id: crypto?.randomUUID
+    //       ? crypto.randomUUID()
+    //       : `${Date.now()}-${Math.random()}`,
+    //     action: "UPDATE",
+    //     status: ContactStatus.PROSPECT,
+    //     createdAt: new Date(),
+    //     idContact: movingContact.id,
+    //     newInteractionPhase: targetCol.id as InteractionPhase,
+    //     pastInteractionPhase: movingContact.interactionPhase,
+    //     type: movingContact.type,
+    //   };
 
-      movingContact.setHistory([...(movingContact.history || []), newHistory]);
+    //   const newHistory = await container.saveHistoryUseCase.execute(history);
+    //   console.warn("HISTORICO: ", movingContact.history);
 
-      movingContact.interactionPhase = targetCol.id as InteractionPhase;
-    } catch (error) {
-      console.error("Error registrando el movimiento:", error);
-      addToast({
-        title: "Error al registrar movimiento",
-        description: "No se pudo registrar el cambio de etapa.",
-        color: "danger",
-        timeout: 3000,
-      });
-    }
+    //   movingContact.setHistory([...(movingContact.history || []), newHistory]);
+
+    //   movingContact.interactionPhase = targetCol.id as InteractionPhase;
+    // } catch (error) {
+    //   console.error("Error registrando el movimiento:", error);
+    //   addToast({
+    //     title: "Error al registrar movimiento",
+    //     description: "No se pudo registrar el cambio de etapa.",
+    //     color: "danger",
+    //     timeout: 3000,
+    //   });
+    // }
 
     handleDragEnd();
   };
@@ -204,23 +250,38 @@ export const KanbanBoard = () => {
         onSuccess={() => {
           selectedContact?.setStatus(ContactStatus.LOYAL);
           selectedContact?.setInteractionPhase(InteractionPhase.CLOSING);
-          if (selectedContact?.type === "CLIENT") {
-            handleUpdateClient({
-              id: selectedContact.id,
-              status: ContactStatus.LOYAL,
-              interactionPhase: InteractionPhase.CLOSING,
-            });
-          } else {
-            handleUpdateLead({
-              id: selectedContact?.id || "",
-              status: ContactStatus.LOYAL,
-              interactionPhase: InteractionPhase.CLOSING,
-            });
-          }
+          handleCreateHistory(selectedContact as Contact);
+          // if (selectedContact?.type === "CLIENT") {
+          //   handleUpdateClient({
+          //     id: selectedContact.id,
+          //     status: ContactStatus.LOYAL,
+          //     interactionPhase: InteractionPhase.CLOSING,
+          //   });
+          // } else {
+          //   handleUpdateLead({
+          //     id: selectedContact?.id || "",
+          //     status: ContactStatus.LOYAL,
+          //     interactionPhase: InteractionPhase.CLOSING,
+          //   });
+          // }
           setIsRatingContact(false);
         }}
         onFailed={() => {
           selectedContact?.setStatus(ContactStatus.LOST);
+          handleCreateHistory(selectedContact as Contact);
+          // if (selectedContact?.type === "CLIENT") {
+          //   handleUpdateClient({
+          //     id: selectedContact.id,
+          //     status: ContactStatus.LOST,
+          //     interactionPhase: InteractionPhase.CLOSING,
+          //   });
+          // } else {
+          //   handleUpdateLead({
+          //     id: selectedContact?.id || "",
+          //     status: ContactStatus.LOST,
+          //     interactionPhase: InteractionPhase.CLOSING,
+          //   });
+          // }
           setIsRatingContact(false);
         }}
       />
